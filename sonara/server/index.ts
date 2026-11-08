@@ -2,6 +2,7 @@ import {createServer} from 'node:http';
 import {createReadStream} from 'node:fs';
 import {stat,readFile} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
+import {PROGRAM_ENABLED,PROGRAM_ID} from '../src/solana/program-config';
 import {createIssuer} from './achievements';
 import {deploymentOrigin,hostedMetadata} from './deployment';
 import {attachRooms} from './rooms';
@@ -12,7 +13,7 @@ const server=createServer(async(req,res)=>{
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405).end();return;}
   const url=new URL(req.url??'/','http://localhost');
   if(url.pathname==='/health'){res.writeHead(200,{'Content-Type':'application/json'}).end('{"ok":true}');return;}
-  if(url.pathname==='/api/issuer'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-cache'}).end(JSON.stringify({network:'devnet',issuer:issuer.issuer}));return;}
+  if(url.pathname==='/api/issuer'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-cache'}).end(JSON.stringify({network:'devnet',issuer:issuer.issuer,program:PROGRAM_ENABLED?PROGRAM_ID:null}));return;}
   if(url.pathname==='/musician/metadata.json'&&publicOrigin){const metadata=hostedMetadata(JSON.parse(await readFile(resolve(root,'musician/metadata.json'),'utf8')),publicOrigin);const body=JSON.stringify(metadata);res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(body)}).end(req.method==='HEAD'?undefined:body);return;}
   const file=resolve(root,'.'+decodeURIComponent(url.pathname==='/'?'/index.html':url.pathname));
   if(!file.startsWith(root+sep)){res.writeHead(403).end();return;}

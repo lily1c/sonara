@@ -1,0 +1,23 @@
+[package]
+name = "sonara-achievements"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+no-entrypoint = []
+
+[dependencies]
+solana-program = "=2.3.0"
+
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = ['cfg(target_os, values("solana"))'] }
+
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+overflow-checks = true

@@ -1,6 +1,6 @@
 # SONARA — air studio
 
-A local, free and open-source webcam instrument built with React, Vite, TypeScript, MediaPipe Tasks Vision and Tone.js. Eight-note melodic instruments plus a four-pad drum kit; violin and saxophone use local CC0 recordings. No account or wallet is required to play. No microphone, paid API or hosted inference. An optional Solana Devnet musician drawer is available. Two-player mode uses a self-hosted WebSocket room server.
+A local, free and open-source webcam instrument built with React, Vite, TypeScript, MediaPipe Tasks Vision and Tone.js. Eight-note melodic instruments plus a four-pad drum kit; violin and saxophone use local CC0 recordings. No account or wallet is required to play. No microphone, paid API or hosted inference. An optional Solana Devnet musician drawer is available. Band mode (up to four players) uses a self-hosted WebSocket room server.
 
 ## Setup and run
 
@@ -191,11 +191,13 @@ Hit feedback now includes expanding double ink rings, colored scattering strokes
 
 Both hands can now be anywhere comfortably in frame (one higher than the other); the drawn rings are posture suggestions rather than strict hit gates. The lower-thumb sound gate was removed: holding both visible hands starts the tone after a short stable period. Lower thumb now adds a low key. Move either hand out of view to stop. High hands are no longer filtered out, and identical MediaPipe handedness labels cannot block two-hand detection. Sax mode does not use palm swipes to switch instruments. The on-screen status shows how many hands are detected.
 
-## Solana Devnet musician
+## Solana Devnet profiles, achievements and collectibles
 
-Open **Musician · Devnet** in the header to connect a Wallet Standard Solana wallet, mint a Metaplex Core musician, inspect confirmed ownership/traits, and sign a test counter update. Use a browser with your wallet extension enabled and free Devnet test SOL. Each transaction needs your own wallet approval. This is an owner-managed demo; earned XP is not implemented. See [Solana setup and verification](docs/SOLANA.md) for exact steps, RPC configuration, temporary metadata hosting, and limitations.
+**The native SONARA achievement program is deployed on Devnet.** Wallet-owned profiles store XP, verified band claims, best performance and First Band status. Server-signed vouchers require the wallet signature and are checked by the program; a wallet/session claim PDA prevents duplicate XP. The first claim unlocks Bandmate, 60 XP Groove Keeper and 120 XP Session Star, each with a different in-app doodle look. Each successful take awards 10–20 XP. See [program identity, account format, tests and deployment](docs/PROGRAM.md).
 
-Completed multiplayer takes now show individual timing results and a **First Band** achievement claim. Play different instruments and hit at least four notes each. The room server signs a wallet-bound receipt, which you can record with a Devnet Memo transaction and download as proof. This is separate from the musician NFT's editable demo counter. Claim before leaving/restarting the room. Preserve the private `.sonara-data` issuer directory across server deployments. See docs/SOLANA.md for trust, privacy and duplicate-record limitations.
+Open **Musician · Devnet** in an extension-enabled browser to connect a Wallet Standard Solana wallet, create/read your program profile, and optionally mint a separate Metaplex Core musician collectible. The collectible's owner-editable demo counter is not earned XP. Use free Devnet test SOL; every transaction needs your own wallet approval.
+
+Complete a multiplayer take with two different instruments and at least four timed hits each. The authoritative game server issues a wallet-bound voucher after message authentication. Approve the program claim to create the permanent achievement record and update profile XP. Verify the claim/profile on Explorer. Legacy Memo receipts remain readable but are not the new XP path. Rooms remain in memory; claim before leaving or restarting. Preserve the private issuer seed on Render and ignored deployment keys locally. See [Solana setup and limits](docs/SOLANA.md).
 
 ## Final demo release
 

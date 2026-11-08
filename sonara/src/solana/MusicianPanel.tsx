@@ -1,3 +1,5 @@
+import {PROGRAM_ENABLED} from './program-config';
+import ChainProfileCard from './ChainProfileCard';
 import BandAchievementGuide from './BandAchievementGuide';
 import {useEffect,useRef,useState} from 'react';
 import {getWallets} from '@wallet-standard/app';
@@ -23,6 +25,7 @@ export default function MusicianPanel({instrument,onClose}:{instrument:string;on
   <p>A wallet-owned musician NFT. This first integration is an owner-managed Devnet demo.</p>
   {!connected?<><h3>Connect a wallet</h3>{wallets.length?wallets.map(w=><button className="flow-primary wallet-choice" key={w.name} disabled={!!busy} onClick={()=>void run('Connecting wallet…',()=>attach(w))}>{w.name}</button>):<p className="wallet-empty">No compatible wallet detected. Open this HTTPS game in a browser with a Wallet Standard Solana wallet enabled, then refresh the wallet list.</p>}<button disabled={!!busy} onClick={()=>setWallets(getWallets().get().filter(supported))}>Refresh wallet list</button><a href="https://solana.com/solana-wallets" target="_blank" rel="noreferrer">Solana wallet directory ↗</a></>:<>
    <div className="wallet-address"><strong>{connected.wallet.name}</strong><a href={`https://explorer.solana.com/address/${connected.account.address}?cluster=devnet`} target="_blank" rel="noreferrer">{connected.account.address}</a><span>{amount===null?'Balance not loaded':`${amount.toFixed(4)} test SOL`}</span></div>
+   <ChainProfileCard key={connected.account.address} connection={connected}/>
    <button disabled={!!busy} onClick={()=>void run('Disconnecting…',async()=>{const f=connected.wallet.features[StandardDisconnect] as StandardDisconnectFeature[typeof StandardDisconnect]|undefined;try{await f?.disconnect();}finally{clearConnection();}})}>Disconnect</button>
    <div className="chain-actions"><button disabled={!!busy} onClick={()=>void run('Reading Devnet…',refresh)}>Refresh from chain</button><a href="https://faucet.solana.com/" target="_blank" rel="noreferrer">Get free Devnet test SOL ↗</a></div>
    <label>Musician asset address<input value={address} onChange={e=>{setAddress(e.target.value);setMusician(null);}} placeholder="Paste an existing Core asset address" disabled={!!busy}/></label>
@@ -33,6 +36,6 @@ export default function MusicianPanel({instrument,onClose}:{instrument:string;on
   {busy&&<p role="status" className="chain-status">{busy}</p>}{message&&<p role="status" className="chain-message">{message}</p>}
   {signature&&<a className="chain-tx" href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`} target="_blank" rel="noreferrer">Confirmed transaction ↗</a>}
   <details className="wallet-quest"><summary>How do band achievements work?</summary><BandAchievementGuide/></details>
-  <p className="chain-note">You approve each transaction in your wallet. No mainnet, private-key entry or automatic purchases. Metadata uses this temporary game URL; it will need permanent hosting before a lasting release. Game XP and server-authorized achievements are a separate next step. Guest play stays available.</p>
+  <p className="chain-note">You approve each transaction in your wallet. No mainnet, private-key entry or automatic purchases. Metadata uses this temporary game URL; it will need permanent hosting before a lasting release. {PROGRAM_ENABLED?'Earned XP is managed by the SONARA program above; the NFT demo counter is not XP.':'Program-earned XP is pending activation.'} Guest play stays available.</p>
  </aside>;
 }

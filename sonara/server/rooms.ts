@@ -8,9 +8,11 @@ import {qualified,bandRequirements} from '../src/solana/achievement';
 import type {AchievementPayload} from '../src/solana/achievement';
 import {networkInterfaces} from 'node:os';
 import {songById,validSong} from '../src/multiplayer/songs';
-import {chartId,duration,emptyScore,judge,expire,laneCount,type Role,type RoomView,type PlayerView} from '../src/multiplayer/game';
+import {PROGRAM_ENABLED,PROGRAM_ID} from '../src/solana/program-config';
+import {encodeVoucher,toBase64} from '../src/solana/voucher';
+import {chartId,duration,emptyScore,judge,expire,laneCount,performance,type Role,type RoomView,type PlayerView} from '../src/multiplayer/game';
 type Player=PlayerView&{token:string;ws:WebSocket|null;seen:Set<string>;rateAt:number;rate:number;expires:number;frameAt:number;musicAt:number;musicRate:number;achievementBinding?:{match:string;wallet:string;receipt:ReturnType<ReturnType<typeof createIssuer>['issue']>}};
-type Room=Omit<RoomView,'players'>&{players:Player[];touched:number;claimBindings?:Record<string,string>;completion?:{band:number;ended:number;players:Record<string,{role:string;points:number;hits:number}>}};
+type Room=Omit<RoomView,'players'>&{players:Player[];touched:number;claimBindings?:Record<string,string>;completion?:{band:number;ended:number;players:Record<string,{role:string;points:number;performance:number;hits:number}>}};
 export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer=createIssuer()){
  const rooms=new Map<string,Room>(),peers=new Set<WebSocket>();
  const wss=new WebSocketServer({noServer:true,maxPayload:100000});
@@ -24,6 +26,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
  server.on('upgrade',upgrade);
  function send(ws:WebSocket|null,value:unknown){if(ws?.readyState===WebSocket.OPEN){if(ws.bufferedAmount>100000){ws.terminate();return;}ws.send(JSON.stringify(value));}}
  function snapshot(room:Room):RoomView{return {code:room.code,host:room.host,phase:room.phase,startAt:room.startAt,bpm:room.bpm,matchId:room.matchId,chartId:room.chartId,reason:room.reason,achievementEligible:room.achievementEligible,achievementChecks:room.achievementChecks,completedPlayers:room.completedPlayers,players:room.players.map(({id,name,role,ready,connected,score})=>({id,name,role,ready,connected,score}))};}
+ async function sendReceipt(ws:WebSocket,receipt:ReturnType<typeof issuer.issue>){const message=PROGRAM_ENABLED?await encodeVoucher(receipt.payload,PROGRAM_ID):null;send(ws,{type:'achievement-receipt',receipt,voucher:message?{programId:PROGRAM_ID,issuer:issuer.issuer,message:toBase64(message),signature:issuer.signBytes(message).toString('base64')}:null});}
  function publish(room:Room){const state=snapshot(room);for(const p of room.players)send(p.ws,{type:'state',room:state});}
  function interrupt(room:Room,reason:string){if(room.phase==='playing'){room.phase='interrupted';room.reason=reason;room.players.forEach(p=>p.ready=false);}}
  wss.on('connection',(ws,request)=>{
@@ -45,7 +48,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
   const fail=(message:string)=>send(ws,{type:'error',message});
   function leave(){if(!room||!player)return;const old=room;old.players=old.players.filter(p=>p!==player);interrupt(old,'A player left. Invite a partner and ready up again.');if(old.host===player.id)old.host=old.players[0]?.id??'';player.ws=null;player=undefined;room=undefined;if(old.players.length)publish(old);else rooms.delete(old.code);}
   let windowAt=clock(),messages=0;
-  ws.on('message',raw=>{
+  ws.on('message',async raw=>{
    try{
     const now=clock();if(now-windowAt>1000){windowAt=now;messages=0;}if(++messages>40){ws.close(1008,'Too many messages');return;}
     const m=JSON.parse(raw.toString());if(!m||typeof m!=='object')return;
@@ -85,10 +88,10 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
      if(!pending||pending.expires<now||room.phase!=='results'||!room.achievementEligible||!room.completion?.players[player.id]||room.matchId!==pending.match||typeof m.signature!=='string'||!verifyWallet(pending.wallet,pending.message,m.signature))return fail('Wallet proof expired or invalid. Request a fresh achievement challenge.');
      // Binding is stored on the player, surviving reconnects. Never accept client scores.
      const previous=player.achievementBinding;
-     if(previous?.match===room.matchId){if(previous.wallet!==pending.wallet)return fail('This performance is already bound to another wallet.');send(ws,{type:'achievement-receipt',receipt:previous.receipt});return;}
+     if(previous?.match===room.matchId){if(previous.wallet!==pending.wallet)return fail('This performance is already bound to another wallet.');await sendReceipt(ws,previous.receipt);return;}
      if(room.claimBindings?.[pending.wallet]&&room.claimBindings[pending.wallet]!==player.id)return fail('Each band player must use a different wallet.');
      const payload:AchievementPayload={v:1,app:'sonara',badge:'first-band',song:room.chartId,match:room.matchId,wallet:pending.wallet,...room.completion!.players[player.id],band:room.completion!.band,ended:room.completion!.ended};
-     const receipt=issuer.issue(payload);room.claimBindings??={};room.claimBindings[pending.wallet]=player.id;player.achievementBinding={match:room.matchId,wallet:pending.wallet,receipt};bound.set(room.matchId,{wallet:pending.wallet,receipt});send(ws,{type:'achievement-receipt',receipt});return;
+     const receipt=issuer.issue(payload);room.claimBindings??={};room.claimBindings[pending.wallet]=player.id;player.achievementBinding={match:room.matchId,wallet:pending.wallet,receipt};bound.set(room.matchId,{wallet:pending.wallet,receipt});await sendReceipt(ws,receipt);return;
     }
     if(m.type==='camera-frame'){
      if(typeof m.image!=='string'||m.image.length>90000||!/^data:image\/jpeg;base64,[A-Za-z0-9+/]+=*$/.test(m.image)||now-player.frameAt<240)return;
@@ -154,7 +157,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
    if(!room.players.length||now-room.touched>3600000){for(const p of room.players)p.ws?.close(1000,'Room expired');rooms.delete(room.code);continue;}
    if(room.phase==='playing'){
     let changed=false;for(const p of room.players)changed=expire(p.score,p.role,now-room.startAt-800,room.bpm,room.chartId)||changed;
-    if(now>room.startAt+duration(room.bpm,room.chartId)+1100){for(const p of room.players){expire(p.score,p.role,Infinity,room.bpm,room.chartId);p.ready=false;}room.achievementEligible=qualified(room.players);room.achievementChecks=bandRequirements(room.players,true);room.completedPlayers=room.players.map(({id,name,role,score})=>({id,name,role,ready:false,connected:true,score:structuredClone(score)}));room.completion={band:room.players.length,ended:Math.round(room.startAt+duration(room.bpm,room.chartId)),players:Object.fromEntries(room.players.map(p=>[p.id,{role:p.role,points:p.score.points,hits:p.score.perfect+p.score.good}]))};room.phase='results';changed=true;}
+    if(now>room.startAt+duration(room.bpm,room.chartId)+1100){for(const p of room.players){expire(p.score,p.role,Infinity,room.bpm,room.chartId);p.ready=false;}room.achievementEligible=qualified(room.players);room.achievementChecks=bandRequirements(room.players,true);room.completedPlayers=room.players.map(({id,name,role,score})=>({id,name,role,ready:false,connected:true,score:structuredClone(score)}));room.completion={band:room.players.length,ended:Math.round(room.startAt+duration(room.bpm,room.chartId)),players:Object.fromEntries(room.players.map(p=>[p.id,{role:p.role,points:p.score.points,performance:performance(p.score,p.role,room.chartId),hits:p.score.perfect+p.score.good}]))};room.phase='results';changed=true;}
     if(changed)publish(room);
    }
   }

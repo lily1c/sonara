@@ -1,0 +1,14 @@
+{
+  "network": "devnet",
+  "program": "7R9eJmdmfHU3CRGBESH57CV4yFdy3rG73EkxGv5bPsp6",
+  "admin": "Cnz1n2Ym84sKbRiZokAH4Ey64oNgs4oX9eZuJoxDRow6",
+  "issuer": "J8GjkDSWHgctSnYTwvbMwQSwuEcmvFqj6fc88TZeSvYc",
+  "config": "GVgRfXeFJCgSWN5hqEXioQk3T4r3D7KeUYrG4Z8d8N2q",
+  "programData": "F4VPX7SsE6xZAFjCB6v4UnDnHi8oj9tDVQrUGC3mCmqV",
+  "configTransaction": "x3PkqTJerxfTWcXyditp8QUF23sy7qQoUfzqcXm3kiAs5xMFKm9YaYQ95cVa2sTPy2LmH29WpELNHyp5PjwP8sd",
+  "binarySha256": "38af469f8da4e0306739669441693c8b1835c654b2d2d5bc62879641671e15b5",
+  "binaryBytes": 79400,
+  "localValidatorTests": "passed",
+  "rustUnitTests": 2,
+  "deploymentTransaction": "2qmdG1kUh789vHYZFgPuPFkdk1BAUsiMtDH5fTrkgHfcwjbgbEmqv1gcfQgMvjkTiFXZu5e8hyf9nihx73XH9jGu"
+}

@@ -299,3 +299,7 @@ Wallet Standard packages, Metaplex Umi/Core SDKs and their dependencies retain t
 Twinkle, Twinkle Little Star (traditional French melody) and Ode to Joy (L. V. Beethoven) use new simplified SONARA game arrangements, distributed as MIT project material. No lyrics, commercial recordings or third-party modern arrangement files are bundled. Composition provenance and public-domain catalog references are retained in docs/SONGS.md and in the song picker. First Jam remains an original SONARA composition.
 
 Standalone doodle SVG exports embed the local Patrick Hand font as a data URI and retain the complete supplied OFL text in SVG metadata. Instrument musicians, borders, textures, stamps and song decorations are original SONARA vector artwork, MIT. No AI image generation or reference-image tracing is used for these exports.
+
+## Native Solana achievement program
+
+SONARA's Rust program source is MIT. It uses the Apache-2.0 Solana program SDK 2.3.0, with exact dependencies pinned by chain/program/Cargo.lock. The complete declared-license inventory and supplied package license/notice files are retained in chain/DEPENDENCIES.md and chain/licenses. Solana/Agave and SBF platform tools are development tooling, not bundled application assets.

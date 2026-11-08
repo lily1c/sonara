@@ -1,48 +1,29 @@
-# SONARA demo release
+# SONARA demo
 
-## A two-minute presentation
+“SONARA turns AI hand tracking into a band studio. Solana gives each wallet persistent musician progress and verifies earned claims without allowing duplicate XP.”
 
-“SONARA is a webcam band studio. MediaPipe AI turns hand movements into playable instruments, and Solana lets musicians own a character and record signed band achievements.”
+1. Start a solo song. Show the instrument-specific hand diagram, camera landmarks, and keyboard/touch alternatives. AI here is pretrained MediaPipe hand detection; practice feedback is rule-based.
+2. Prepare two devices on https://sonara-gby7.onrender.com. Choose different instruments, join by room code, explicitly share camera/sound, ready and start together.
+3. Each player lands four timed notes and stays connected until completion. The live First Band checklist explains progress. Pick an original song or the reviewed public-domain arrangements.
+4. Results show normalized rankings and personalized, self-contained doodle SVG keepsakes. Explain that the poster is not an NFT or blockchain proof.
+5. In an extension-enabled browser with free Devnet SOL, claim with Phantom. Approve the binding message and SONARA program transaction. The program validates the configured issuer and wallet, creates a unique claim account and awards XP. Verify the account/transaction on Explorer.
+6. Open Musician · Devnet and refresh the on-chain profile. Show XP, session count, First Band, title and unlocked doodle look. Reconnect the wallet on another device to demonstrate persistence. Optionally show the independent Metaplex Core collectible; its test counter is not earned XP.
 
-1. Press Start, choose Solo and piano. Start the camera yourself; keep your hand well lit. Raise an index finger and tap down through a target. Use A S D F G H J K if tracking is difficult.
-2. Switch to drums, violin or saxophone to show each instrument's guide. Sax requires both hands visible; curl fingers to change pitch. Stop camera to release it.
-3. For the strongest demo, prepare two browsers/devices on the same public HTTPS game beforehand. Choose Band, create a room, share its code, and join from the other device. Choose different instruments.
-4. Both players explicitly join live camera + sound. Confirm you see the partner preview and hear a test note. Both click Ready; the host starts the take. Hit at least four notes each. Keyboard/touch input is valid.
-5. Results show timing, individual scores, streaks and practice advice. Qualifying takes offer First Band. In an extension-enabled browser, connect a wallet with free Devnet SOL. Approve the authentication message and Memo transaction yourself. Open Explorer and verify the receipt.
-6. Optionally show the musician panel: mint/read a Metaplex Core musician collectible. Describe its editable counter as a signing demo, not earned XP.
-
-## What is shipped
-
-- Four playable instruments; local MediaPipe inference and local recorded/synthesized sounds.
-- Start/mode/instrument selection, magnifying doodle dock and camera-centered stage.
-- Up to four players, room codes, explicit low-frame-rate preview sharing with landmark overlays, partner instrument events rendered as sound, readiness/countdown and server scoring.
-- Solo/band results, poster export, timing-based practice feedback and gentler solo retries.
-- Wallet Standard integration, Metaplex Core musician demo, server-signed band receipt and Devnet Memo recording/readback.
-- Loading/error fallbacks, reconnect handling and keyboard/touch alternatives.
+The deployed program and public test evidence are documented in PROGRAM.md and chain/release/. Local-validator tests exercise attacks/replays; the live test script uses labeled automated inputs and a dedicated project test wallet. It does not claim to be a human camera performance or the user's Phantom approval.
 
 ## Accurate limits
 
-This is a hackathon demo, not a production service. Camera tracking needs human testing on the target hardware. The coding agent has not completed a real wallet-approved mint or achievement transaction. Do not claim mainnet deployment, a custom deployed Anchor program, sponsored fees, extension-free wallet login, AI song recognition, generative coaching, verified human play, or achievement NFTs. On-chain receipts rely on recognizing the server issuer and do not enforce duplicate prevention in a custom program. The independent musician NFT retains owner-controlled traits.
+Devnet only. The server judges timing and remains trusted for musical performance; keyboard, touch and automated clients are accepted. The program enforces authorization and uniqueness, not proof of human play. Profiles/claims are program accounts, not achievement NFTs. The program remains upgradeable by its deployment administrator and has not had a formal audit. Sponsored fees and extension-free onboarding are not implemented.
 
-Preview sharing is JPEG frames over WebSockets, not full-rate WebRTC calling; microphones are not used. Rooms and unclaimed results are held in memory. Preserve the private issuer key across restarts, and claim before leaving the room. The public Cloudflare URL and metadata are temporary. Keep Devnet selected; test SOL has no cash value. Nine moderate transitive dependency audit findings remain documented in SOLANA.md.
+JPEG preview sharing is not full-frame-rate WebRTC calling; microphones are not used. Rooms/unclaimed takes live in memory. On-chain progress persists subject to Devnet resets. Render Free has cold starts. The optional Core NFT uses owner-managed traits. Existing transitive dependency audit findings are documented in SOLANA.md.
 
-## Release checks and remaining human check
-
-Automated: gesture detection, multiplayer server validation, two-client timing/scoring, reconnects, signed receipt eligibility/authentication/replay, transaction construction/size, receipt readback validation and coaching. Production build must pass.
-
-Human: use two physical devices to confirm tracking/audio and approve one Devnet mint and claim. A live wallet transaction is not implied by passing offline construction tests. Keep a screenshot/Explorer link of the approved transaction for the presentation. No seed phrases belong in source code, screenshots or submissions.
-
-Next after this demo: persistent deployment and metadata; authenticated persistent progress; a deployed achievement program with authority validation and unique claim accounts; optional funded fee sponsorship. Embedded wallets need provider app registration. These remain separate work rather than features claimed in the submission.
-
-## Reproducible checks
+## Checks
 
 ```sh
 npm test
 npm run build
-npm run check:public -- https://your-game.example
-npm run verify:proof -- downloaded-proof.json TRUSTED_ISSUER_PUBLIC_KEY
+npm run check:public -- https://sonara-gby7.onrender.com
+cargo test --manifest-path chain/program/Cargo.toml
 ```
 
-The public smoke check opens disposable rooms and checks joining, instrument selection, reactions, note relay and synthetic preview relay. It does not send real camera frames. Proof verification requires a separately trusted issuer public key, not merely the key included in an untrusted receipt. The public key is shown with the downloaded proof in the game; establish the genuine deployment key before verifying third-party proofs. Offline verification does not itself check a chain transaction.
-
-Final validation performed: production TypeScript/Vite build; 32 regression tests; public HTTPS WebSocket smoke check; offline proof verifier positive/negative checks; static deployment private-key exclusion check; browser solo count-in at 60 BPM and results/practice feedback. No camera permission was requested during automated browser checks, and no real wallet transaction was signed.
+See PROGRAM.md for full compiled-program/local-validator tests and live claim/replay verification. Validate human camera/audio on the actual demo devices and approve a Phantom transaction yourself. Never put wallet recovery phrases, issuer secrets or deployment keypairs in screenshots or submissions.

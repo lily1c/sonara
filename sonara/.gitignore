@@ -12,3 +12,7 @@ dist/
 preview*.png
 
 preview*.svg
+
+# On-chain builds and local validator data
+chain/program/target/
+chain/test-ledger/

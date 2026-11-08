@@ -1,5 +1,5 @@
 import {createUmi} from '@metaplex-foundation/umi-bundle-defaults';
-import {generateSigner,publicKey,signerIdentity,type Signer,type Transaction} from '@metaplex-foundation/umi';
+import {generateSigner,publicKey,signerIdentity,transactionBuilder,type Signer,type Transaction} from '@metaplex-foundation/umi';
 import {base58} from '@metaplex-foundation/umi/serializers';
 import {create,mplCore,fetchAsset,fetchAssetsByOwner,updatePlugin,type AssetV1} from '@metaplex-foundation/mpl-core';
 import type {Wallet,WalletAccount} from '@wallet-standard/base';
@@ -18,7 +18,7 @@ export async function connectWallet(wallet:Wallet):Promise<Connected>{
  return {wallet,account};
 }
 export function readClient(){return createUmi(endpoint,{commitment:'confirmed'}).use(mplCore());}
-async function checkedClient(connection:Connected){
+export async function checkedClient(connection:Connected){
  const umi=readClient();await assertNetwork(umi);const key=publicKey(connection.account.address);
  const signer:Signer={publicKey:key,signMessage:async()=>{throw new Error('Message signing is not used by this demo.');},signTransaction:async(transaction:Transaction)=>{
   // Check again immediately before asking a wallet to sign.
@@ -84,7 +84,7 @@ export async function verifyAchievement(receipt:import('./achievement').Achievem
 }
 export async function anchorAchievement(connection:Connected,receipt:import('./achievement').AchievementReceipt,issuer:string,onSigned:(signature:string)=>void){
  await verifyAchievement(receipt,issuer,connection.account.address);
- const umi=await checkedClient(connection),{transactionBuilder}=await import('@metaplex-foundation/umi');
+ const umi=await checkedClient(connection);
  const {receiptMemo}=await import('./achievement');const data=new TextEncoder().encode(receiptMemo(receipt));
  if(data.length>566)throw new Error('Achievement receipt exceeds the memo size limit.');
  const blockhash=await umi.rpc.getLatestBlockhash();
