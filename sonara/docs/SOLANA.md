@@ -71,3 +71,9 @@ Additional official references: https://solana.com/docs/frontend/messages-and-au
 ### Final demo readback improvement
 
 The achievement panel now offers **Verify record from Devnet**. Reloaded local references begin unverified; readback checks the issuer signature, successful transaction metadata, wallet signer membership, and exact Memo bytes. This also helps recover a submission whose initial confirmation timed out. The offline `verify:proof` script requires a separately trusted issuer public key. It verifies the downloaded signed receipt without claiming that a chain record exists. Final regression suite: 32 passing tests.
+
+### Hosted deployment
+
+The Render blueprint generates a persistent private `SONARA_ISSUER_SEED` environment value. The server derives its Ed25519 receipt issuer from this secret instead of writing a key to Render's ephemeral disk. Keep that environment value unchanged across deployments. It is a receipt attestation key, not a funded Solana wallet, and must never be a VITE variable. Moving from the laptop to a new hosted issuer changes the trusted public key; old signed receipts still verify against their original issuer. The public `/api/issuer` endpoint exposes only the current public key.
+
+On hosted deployments, musician JSON uses the configured HTTPS `SONARA_PUBLIC_URL` or Render's `RENDER_EXTERNAL_URL` for its artwork and external URL. New NFT metadata URIs therefore use the hosted domain. Previously minted assets using old tunnel URIs are not automatically migrated.

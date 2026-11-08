@@ -19,3 +19,7 @@ Use Node.js 22 or newer. For production: `npm run build` then `npm start`. Remot
 - [MIT license](sonara/LICENSE)
 
 MediaPipe provides local pretrained hand detection. Practice coaching is rule-based. Wallet-approved Devnet minting/claiming still requires human end-to-end verification. Private signing keys, dependencies, build output, and local preview screenshots are excluded from version control.
+
+## Hosted deployment
+
+Deploy the complete Node + WebSocket app using the root [Render blueprint](render.yaml). See [deployment steps and free-tier limits](sonara/docs/DEPLOY.md). Static-only hosting is insufficient for multiplayer.

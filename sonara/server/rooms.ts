@@ -35,7 +35,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
     const lan=candidates.find(n=>n.family==='IPv4'&&!n.internal);
     if(lan){url.hostname=lan.address;inviteOrigin=url.origin;}
    }
-   if(process.env.SONARA_PUBLIC_URL)inviteOrigin=new URL(process.env.SONARA_PUBLIC_URL).origin;
+   if(process.env.SONARA_PUBLIC_URL||process.env.RENDER_EXTERNAL_URL)inviteOrigin=new URL(process.env.SONARA_PUBLIC_URL||process.env.RENDER_EXTERNAL_URL!).origin;
   }catch{}
 
   peers.add(ws);let room:Room|undefined,player:Player|undefined;let alive=true,lastReaction=0;
