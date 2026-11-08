@@ -32,4 +32,4 @@ Deploy the complete Node + WebSocket app using the root [Render blueprint](rende
 
 ## Solo and band rewards
 
-Solo players earn browser-local practice XP, titles and badges after completed songs with at least four timed hits. Eligible multiplayer takes earn separate program-verified Solana Devnet XP through wallet-approved claims. No paid AI credits are required. See the [current product README](sonara/README.md) for reward rules, controls and release limits.
+Solo players earn browser-local practice XP, titles and badges after completed songs with at least four timed hits. Completed server-scored solo takes also unlock First Solo. Eligible solo and multiplayer takes earn separate program-verified Solana Devnet XP through wallet-approved claims. No paid AI credits are required. See the [current product README](sonara/README.md) for reward rules, controls and release limits.

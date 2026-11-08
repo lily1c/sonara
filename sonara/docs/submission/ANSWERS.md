@@ -58,4 +58,4 @@ These require your own choices. If the narrative above reflects your experience,
 
 ## Before pressing Submit
 
-Upload a real demo video and paste the supported video URL. Check the live site after its cold start. Demonstrate a solo reward, then a two-player completed take and a wallet-approved Devnet claim if possible. Confirm beginner eligibility and personal ratings. The source changes in this workspace still need committing, pushing and deployment before the hosted demo reflects the new solo rewards. This file does not submit the form.
+Upload a real demo video and paste the supported video URL. Check the live site after its cold start. Demonstrate a complete solo take, then a wallet-approved First Solo Devnet claim. Confirm beginner eligibility and personal ratings. Verify the hosted deployment includes the latest commit before recording. This file does not submit the form.
