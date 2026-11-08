@@ -1,0 +1,33 @@
+{
+  "source": "https://github.com/sgossner/VCSL",
+  "commit": "c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e",
+  "path": "Aerophones/Reed Aerophones/Tenor Saxophone/Non-Vibrato/BrettTenor_NV_Main_<pitch>_vl2_rr1.wav",
+  "license": "CC0-1.0",
+  "modifications": "peak normalized to -3dBFS; WAV metadata stripped; original sample rate, channels and bit depth preserved",
+  "files": [
+    {
+      "file": "C3.wav",
+      "originalSha256": "4afeef41e7f3a5df8c47a3f31389b5948837fe8b21c9e3e9e135829e44050677",
+      "sha256": "88749fa8fbbece69c3a14d69793dcb8f88d93da01d1b4286bd197df9b1fba1b5",
+      "gainDb": 25.09044653709093
+    },
+    {
+      "file": "C4.wav",
+      "originalSha256": "f2eebd4fc0faecae312bd886c9830b268b134842e927f5a5c79ccc2ed24ed597",
+      "sha256": "c5df0ab7aa6830a9b9b429abc2e6ac6c77fce56a84f7a21f55d03d298e6c253a",
+      "gainDb": 21.021233673919543
+    },
+    {
+      "file": "Fs4.wav",
+      "originalSha256": "699922b8bb7eb109e51c8fbf6a333eb29c09a7a8e836416030130ac0de47d5d4",
+      "sha256": "347841d645e60c2952d3cce9a1e27864128dfe5abf9f1d84c7d26d9c2cbf5418",
+      "gainDb": 16.780212943435142
+    },
+    {
+      "file": "E3.wav",
+      "originalSha256": "3c6553a90fe366f6668488ee228a706d765de1e309e1e8f7d2fc1fa536368745",
+      "sha256": "e6e23767484c5622f6e43b1536bc32d55534f9daec369f31206b8f1574b4ec67",
+      "gainDb": 19.561701746993204
+    }
+  ]
+}

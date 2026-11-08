@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.DS_Store
+*.pem
+*.key
+.env
+.env.local
+
+.sonara-data/
+
+# Local UI verification screenshots
+preview*.png

@@ -1,0 +1,40 @@
+{
+  "repository": "https://github.com/sgossner/VSCO-2-CE",
+  "commit": "440300901dfe9275fd84e0b7763af1f8443ae62e",
+  "license": "CC0-1.0",
+  "modifications": "Peak normalized independently to -3 dBFS; PCM16 stereo 44.1kHz preserved; WAV metadata removed.",
+  "files": [
+    {
+      "file": "A4.wav",
+      "sourcePath": "Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_A4_p.wav",
+      "originalSha256": "0d05607b46b78690893006d5aa7923ac304c7fb497df1e96536dc88ac5ac487f",
+      "sha256": "f0f3f66605d4fc5aaa337c80cb8fb838714f89ff9405fbb5852e00e74d00f3eb",
+      "gainDb": 17.487,
+      "durationSeconds": 14.807687074829932
+    },
+    {
+      "file": "C4.wav",
+      "sourcePath": "Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_C4_p.wav",
+      "originalSha256": "592ebf4404ccafc7164c13cc543911ba9a2fe5f5e70dbb200807e2ae37b25035",
+      "sha256": "20cbdf4a6ca9983cd33dc7668c6e919e947f30b6c1e2dc506ab36fc64774a0f8",
+      "gainDb": 15.931,
+      "durationSeconds": 17.554444444444446
+    },
+    {
+      "file": "E5.wav",
+      "sourcePath": "Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_E5_p.wav",
+      "originalSha256": "c60c3bcfc64ea00ebf8d97b16f2876c892393839a017a945c5e557359b6369a4",
+      "sha256": "39a5d3bed29f39c3a77a7105b889b6b7ccb41271dfa2e0c255bb474aa4ed1fec",
+      "gainDb": 22.756,
+      "durationSeconds": 14.268979591836734
+    },
+    {
+      "file": "G3.wav",
+      "sourcePath": "Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_G3_p.wav",
+      "originalSha256": "c52d8ef3e2882984c09da1b7c7ef40b82e997bc78cfdd380fe167bbcb94b03de",
+      "sha256": "6180979945a579f71f6d3718c9904d63d4772427b098d7849aa3043548a920af",
+      "gainDb": 19.686,
+      "durationSeconds": 15.80938775510204
+    }
+  ]
+}

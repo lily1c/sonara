@@ -1,0 +1,5 @@
+import {it,expect} from 'vitest';
+import {assertReceiptRecord,receiptMemo,type AchievementReceipt} from './achievement';
+const receipt:AchievementReceipt={payload:{v:1,app:'sonara',badge:'first-band',match:'match',wallet:'wallet',role:'piano',points:400,hits:4,band:2,ended:1},issuer:'issuer',signature:'signature'};
+const record=()=>({meta:{err:null as unknown},message:{accounts:['wallet','MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'],header:{numRequiredSignatures:1},instructions:[{programIndex:1,data:new TextEncoder().encode(receiptMemo(receipt))}]}});
+it('accepts only the exact receipt in a successful transaction signed by its wallet',()=>{expect(()=>assertReceiptRecord(record(),receipt)).not.toThrow();const failed=record();failed.meta.err='failed';expect(()=>assertReceiptRecord(failed,receipt)).toThrow('failed');const changed=record();changed.message.instructions[0].data=new TextEncoder().encode('other');expect(()=>assertReceiptRecord(changed,receipt)).toThrow('does not contain');const unsigned=record();unsigned.message.accounts[0]='someone else';expect(()=>assertReceiptRecord(unsigned,receipt)).toThrow('did not sign');});

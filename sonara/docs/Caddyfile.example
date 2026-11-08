@@ -1,0 +1,6 @@
+# Replace with a domain whose DNS points to your reachable host.
+# Run SONARA with npm run build && npm start on that host.
+sonara.example.org {
+    reverse_proxy 127.0.0.1:4173
+}
+# Caddy handles HTTPS and WebSocket upgrades. Never publish private keys.
