@@ -1,0 +1,14 @@
+{
+  "network": "devnet",
+  "program": "7R9eJmdmfHU3CRGBESH57CV4yFdy3rG73EkxGv5bPsp6",
+  "testWallet": "GL69ZX12X8tQhkAqaBzNn8Fki1m91oFTUtjZSJQmL5B9",
+  "profile": "GHnCDiCrs9EcjC9Du5jmgH1XhocUqkf44J9TcJCPFKMn",
+  "claim": "APgabaoTQVrQmmE58DEX15uk3c5Uxbi2ZM3UyvHFq2ev",
+  "claimTransaction": "5SBvWLPkEXvFQCK5RvEAYn2iYcyoExhAEa1p2X2aLYfS4XNQTCTnr2ruJ8WetzAEkxdNqAdaYVkpwdWpDWwG34sE",
+  "rejectedReplayTransaction": "5LduCiyAfJbGQzrJva7Q9zkfcmeSP7qWc1HufoPnq5dy97ohJWpk6C8SbyiV2Ku8AeoMR6ft1ZAexSQAjkn5Y1Eb",
+  "replayError": 7001,
+  "xp": "24",
+  "sessions": "2",
+  "automatedTest": true,
+  "mode": "solo"
+}

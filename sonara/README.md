@@ -10,7 +10,7 @@ Play music with your hands, practice a song alone, or form a band with friends. 
 2. Enable audio. Optionally start the camera and follow the instrument's hand guide. A/S/D/F and on-screen pads provide backup controls.
 3. In solo, choose a song and finish the countdown and take. In a band, share the room code with up to three friends, choose different instruments, ready up and start together.
 4. Review Perfect/Good/Miss results and practice coaching. Download a personalized doodle SVG poster.
-5. Solo players earn local practice rewards. Eligible band players can claim verified Solana Devnet XP and refresh their wallet-owned musician profile.
+5. Solo players earn local practice rewards. Eligible solo and band players can claim verified Solana Devnet XP and refresh their wallet-owned musician profile.
 
 Render Free can take about a minute to wake. Camera access requires HTTPS or localhost. Shared room previews are optional, low-rate JPEGs, not full video calls.
 
@@ -38,7 +38,7 @@ The deployed native Rust achievement program runs on **Solana Devnet**:
 [Inspect the program on Explorer](https://explorer.solana.com/address/7R9eJmdmfHU3CRGBESH57CV4yFdy3rG73EkxGv5bPsp6?cluster=devnet).
 
 - **Wallet-owned profile PDA:** tracks verified XP, session count, best performance and First Band status. Titles and doodle looks derive from this account.
-- **Signed game results:** the room server scores a completed take and signs a wallet-bound voucher after authenticating wallet control. Qualifying band takes require 2–4 connected players, at least two instruments and four timed hits per player.
+- **Signed game results:** the room server scores a completed take and signs a wallet-bound voucher after authenticating wallet control. Qualifying solo takes require one connected player and four timed hits. Band takes require 2–4 connected players, at least two instruments and four timed hits per player. Both require full completion.
 - **Program verification:** the claim transaction verifies the configured issuer's Ed25519 signature and wallet signer. A permanent wallet/session claim PDA prevents duplicate XP. Every accepted claim awards 10–20 XP.
 - **Visible proof:** players can inspect the confirmed claim/profile on Explorer and download a signed receipt. On-chain claims are program accounts, not achievement NFTs.
 - **Optional collectible:** the Musician panel provides a separate Metaplex Core Devnet collectible. Its owner-managed traits are separate from earned program XP.
