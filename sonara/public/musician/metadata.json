@@ -2,8 +2,8 @@
   "name": "SONARA Devnet Musician",
   "symbol": "SONARA",
   "description": "A wallet-owned SONARA musician for Solana Devnet testing. Owner-managed demo attributes are not verified game achievements. Temporary self-hosted metadata; no monetary value is promised.",
-  "image": "https://thesis-fascinating-skins-reads.trycloudflare.com/musician/avatar.svg",
-  "external_url": "https://thesis-fascinating-skins-reads.trycloudflare.com/",
+  "image": "https://treatments-item-subscription-beverly.trycloudflare.com/musician/avatar.svg",
+  "external_url": "https://treatments-item-subscription-beverly.trycloudflare.com/",
   "attributes": [
     {
       "trait_type": "Network",
@@ -18,7 +18,7 @@
     "category": "image",
     "files": [
       {
-        "uri": "https://thesis-fascinating-skins-reads.trycloudflare.com/musician/avatar.svg",
+        "uri": "https://treatments-item-subscription-beverly.trycloudflare.com/musician/avatar.svg",
         "type": "image/svg+xml"
       }
     ]
