@@ -202,3 +202,7 @@ Completed multiplayer takes now show individual timing results and a **First Ban
 Solo starts at a gentle 60 BPM. Results give practice feedback from measured early/late hits and missed targets, with a suggested 60/80/100 BPM retry. This feedback is rule-based, not generative AI. MediaPipe provides pretrained hand-detection AI. Wallet features fail independently of the studio. Achievement records can be rechecked from Devnet after reload, verifying success, wallet signer and exact receipt bytes rather than trusting the browser cache.
 
 See [demo script and release status](docs/DEMO.md) before presenting. Run `npm test` and `npm run build` for the release checks.
+
+## Songbook and competition
+
+Choose **Twinkle, Twinkle Little Star**, **Ode to Joy**, or the original **First Jam** in the studio. Listen previews the opening notes. Solo saves your best performance per song/instrument/tempo on this browser. In band mode the host chooses the song; everyone readies again, then plays the same chart together. Results rank players using normalized performance percentages, including shared ranks for ties. See [song provenance, controls and scoring](docs/SONGS.md). All melodic instruments now use C4–C5 in C major; the sax thumb chooses the upper four notes. No commercial song recordings or lyrics are included.

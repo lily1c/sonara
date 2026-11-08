@@ -1,8 +1,8 @@
 import * as Tone from 'tone';
 export type Instrument = 'piano' | 'drums' | 'violin' | 'saxophone';
 export const notes=['C4','D4','E4','F4','G4','A4','B4','C5'] as const;
-export const violinNotes=['G3','A3','B3','C4','D4','E4','F4','G4'];
-export const saxNotes=['C3','D3','E3','G3','C4','D4','E4','G4'];
+export const violinNotes=['C4','D4','E4','F4','G4','A4','B4','C5'];
+export const saxNotes=['C4','D4','E4','F4','G4','A4','B4','C5'];
 let sax:Tone.Sampler|undefined,saxLoad:Promise<void>|undefined,saxHeld:string|null=null;
 export const drumNames=['Kick','Snare','Hi-hat','Tom'];
 let violin:Tone.Sampler|undefined, violinLoad:Promise<void>|undefined;
@@ -33,7 +33,7 @@ async function loadSax(){
  await saxLoad;
 }
 export function saxSound(lane:number|null,register=false){
- if(!sax?.loaded)return;const pitch=lane===null?null:register?saxNotes[lane].replace('3','4'):saxNotes[lane];
+ if(!sax?.loaded)return;const pitch=lane===null?null:saxNotes[lane+(register?4:0)];
  if(pitch===saxHeld)return;const now=Tone.now();if(saxHeld)sax.triggerRelease(saxHeld,now);saxHeld=pitch;if(pitch)sax.triggerAttack(pitch,now,.8);
 }
 export async function unlock(instrument:Instrument='piano'){
@@ -71,12 +71,12 @@ export function disposeAudio(){
 }
 
 // Schedule original backing and count-in directly on the audio clock.
-export function scheduleLesson(delaySeconds:number,bpm:number){
+export function scheduleLesson(delaySeconds:number,bpm:number,beats=32){
  const bass=new Tone.Synth({oscillator:{type:'sine'},envelope:{attack:.02,decay:.3,sustain:.05,release:.3},volume:-22}).connect(output());
  const click=new Tone.MembraneSynth({octaves:1,pitchDecay:.01,volume:-25}).connect(output());
  const beat=60/bpm,start=Tone.now()+delaySeconds;
  for(let i=-4;i<0;i++){const at=start+i*beat;if(at>Tone.now())click.triggerAttackRelease('C5',.035,at);}
- for(let i=0;i<8;i++){const at=start+i*4*beat;if(at>Tone.now())bass.triggerAttackRelease(['C3','G2','C3','G2'][i%4],beat*1.5,at);}
+ for(let i=0;i<beats/4;i++){const at=start+i*4*beat;if(at>Tone.now())bass.triggerAttackRelease(['C3','G2','C3','G2'][i%4],beat*1.5,at);}
  return ()=>{bass.dispose();click.dispose();};
 }
 

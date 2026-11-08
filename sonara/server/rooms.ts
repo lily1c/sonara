@@ -7,6 +7,7 @@ import {createIssuer,verifyWallet,challengeMessage} from './achievements';
 import {qualified} from '../src/solana/achievement';
 import type {AchievementPayload} from '../src/solana/achievement';
 import {networkInterfaces} from 'node:os';
+import {songById,validSong} from '../src/multiplayer/songs';
 import {chartId,duration,emptyScore,judge,expire,laneCount,type Role,type RoomView,type PlayerView} from '../src/multiplayer/game';
 type Player=PlayerView&{token:string;ws:WebSocket|null;seen:Set<string>;rateAt:number;rate:number;expires:number;frameAt:number;musicAt:number;musicRate:number;achievementBinding?:{match:string;wallet:string;receipt:ReturnType<ReturnType<typeof createIssuer>['issue']>}};
 type Room=Omit<RoomView,'players'>&{players:Player[];touched:number;claimBindings?:Record<string,string>;completion?:{band:number;ended:number;players:Record<string,{role:string;points:number;hits:number}>}};
@@ -86,7 +87,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
      const previous=player.achievementBinding;
      if(previous?.match===room.matchId){if(previous.wallet!==pending.wallet)return fail('This performance is already bound to another wallet.');send(ws,{type:'achievement-receipt',receipt:previous.receipt});return;}
      if(room.claimBindings?.[pending.wallet]&&room.claimBindings[pending.wallet]!==player.id)return fail('Each band player must use a different wallet.');
-     const payload:AchievementPayload={v:1,app:'sonara',badge:'first-band',match:room.matchId,wallet:pending.wallet,...room.completion!.players[player.id],band:room.completion!.band,ended:room.completion!.ended};
+     const payload:AchievementPayload={v:1,app:'sonara',badge:'first-band',song:room.chartId,match:room.matchId,wallet:pending.wallet,...room.completion!.players[player.id],band:room.completion!.band,ended:room.completion!.ended};
      const receipt=issuer.issue(payload);room.claimBindings??={};room.claimBindings[pending.wallet]=player.id;player.achievementBinding={match:room.matchId,wallet:pending.wallet,receipt};bound.set(room.matchId,{wallet:pending.wallet,receipt});send(ws,{type:'achievement-receipt',receipt});return;
     }
     if(m.type==='camera-frame'){
@@ -116,6 +117,11 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
      if(typeof m.ready!=='boolean')return;
      player.ready=m.ready;publish(room);return;
     }
+    if(m.type==='song'){
+     if(room.host!==player.id)return fail('Only the host can choose the song.');
+     if(room.phase==='playing'||!validSong(m.songId))return;
+     room.chartId=m.songId;room.bpm=songById(m.songId).tempo;room.phase='lobby';room.achievementEligible=false;room.completion=undefined;room.players.forEach(p=>p.ready=false);publish(room);return;
+    }
     if(m.type==='tempo'){
      if(room.host!==player.id||room.phase==='playing')return;
      if(![60,80,100].includes(m.bpm))return;
@@ -128,12 +134,12 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
      room.completion=undefined;room.claimBindings={};room.achievementEligible=false;room.phase='playing';room.startAt=now+5000;room.matchId=randomUUID();room.reason='';for(const p of room.players){p.score=emptyScore();p.seen.clear();p.rate=0;}publish(room);return;
     }
     if(m.type==='hit'){
-     if(room.phase!=='playing'||m.matchId!==room.matchId||m.chartId!==chartId||m.role!==player.role)return;
+     if(room.phase!=='playing'||m.matchId!==room.matchId||m.chartId!==room.chartId||m.role!==player.role)return;
      if(!Number.isInteger(m.lane)||m.lane<0||m.lane>=laneCount(player.role)||typeof m.eventId!=='string'||m.eventId.length>80||!['webcam','keyboard','mouse / touch','diagram','bow','sax fingers'].includes(m.mode))return;
-     if(typeof m.at!=='number'||!Number.isFinite(m.at)||Math.abs(now-m.at)>800||m.at>now+100||now<room.startAt||now>room.startAt+duration(room.bpm)+1000)return;
+     if(typeof m.at!=='number'||!Number.isFinite(m.at)||Math.abs(now-m.at)>800||m.at>now+100||now<room.startAt||now>room.startAt+duration(room.bpm,room.chartId)+1000)return;
      if(now-player.rateAt>1000){player.rateAt=now;player.rate=0;}if(++player.rate>12||player.seen.size>=1000||player.seen.has(m.eventId))return;
      player.seen.add(m.eventId);
-     const result=judge(player.score,player.role,m.lane,m.at-room.startAt,room.bpm);
+     const result=judge(player.score,player.role,m.lane,m.at-room.startAt,room.bpm,room.chartId);
      send(ws,{type:'judgement',...(result??{judgement:'Extra tap',error:0})});if(result)publish(room);return;
     }
    }catch{fail('Invalid room message.');}
@@ -147,8 +153,8 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
    if(removed.length){room.players=room.players.filter(p=>!removed.includes(p));if(!room.players.some(p=>p.id===room.host))room.host=room.players[0]?.id??'';publish(room);}
    if(!room.players.length||now-room.touched>3600000){for(const p of room.players)p.ws?.close(1000,'Room expired');rooms.delete(room.code);continue;}
    if(room.phase==='playing'){
-    let changed=false;for(const p of room.players)changed=expire(p.score,p.role,now-room.startAt-800,room.bpm)||changed;
-    if(now>room.startAt+duration(room.bpm)+1100){for(const p of room.players){expire(p.score,p.role,Infinity,room.bpm);p.ready=false;}room.achievementEligible=qualified(room.players);room.completion={band:room.players.length,ended:Math.round(room.startAt+duration(room.bpm)),players:Object.fromEntries(room.players.map(p=>[p.id,{role:p.role,points:p.score.points,hits:p.score.perfect+p.score.good}]))};room.phase='results';changed=true;}
+    let changed=false;for(const p of room.players)changed=expire(p.score,p.role,now-room.startAt-800,room.bpm,room.chartId)||changed;
+    if(now>room.startAt+duration(room.bpm,room.chartId)+1100){for(const p of room.players){expire(p.score,p.role,Infinity,room.bpm,room.chartId);p.ready=false;}room.achievementEligible=qualified(room.players);room.completion={band:room.players.length,ended:Math.round(room.startAt+duration(room.bpm,room.chartId)),players:Object.fromEntries(room.players.map(p=>[p.id,{role:p.role,points:p.score.points,hits:p.score.perfect+p.score.good}]))};room.phase='results';changed=true;}
     if(changed)publish(room);
    }
   }

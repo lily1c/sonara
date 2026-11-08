@@ -1,4 +1,5 @@
 import {useEffect,useState} from 'react';
+import {songById} from './songs';
 import {notes,drumNames,violinNotes,saxNotes} from '../lib/audio';
 import {chart,duration} from './game';
 import type {Band} from './useBand';
@@ -10,11 +11,11 @@ export default function CameraLesson({band,bounds,holderSide}:{band:Band;bounds:
  const {room,role}=band;
  useEffect(()=>{if(room?.phase!=='playing')return;setNow(band.serverNow());const timer=setInterval(()=>setNow(band.serverNow()),33);return()=>clearInterval(timer);},[room?.phase,room?.matchId,band.clock.offset]);
  if(room?.phase!=='playing'||!role)return null;
- const elapsed=now-room.startAt,me=room.players.find(p=>p.id===band.id),pads=padLayout(bounds),remaining=Math.max(0,Math.ceil((duration(room.bpm)-elapsed)/1000));
+ const elapsed=now-room.startAt,me=room.players.find(p=>p.id===band.id),pads=padLayout(bounds),remaining=Math.max(0,Math.ceil((duration(room.bpm,room.chartId)-elapsed)/1000));
  return <div className="camera-lesson" aria-label={`Lesson prompts over ${role} camera targets`}>
-  <div className="camera-score"><span>FIRST JAM · {role.toUpperCase()}</span><strong>{me?.score.points??0} <small>points</small></strong><span>{elapsed<0?'Get ready':`${remaining}s left`} · {room.bpm} BPM</span></div>
+  <div className="camera-score"><span>{songById(room.chartId).title.toUpperCase()} · {role.toUpperCase()}</span><strong>{me?.score.points??0} <small>points</small></strong><span>{elapsed<0?'Get ready':`${remaining}s left`} · {room.bpm} BPM</span></div>
   <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-label="Approaching notes">
-   {chart(role).map(n=>{
+   {chart(role,room.chartId).map(n=>{
     if(me?.score.judged[n.id])return null;const until=n.beat*60000/room.bpm-elapsed;if(until>2300||until< -220)return null;
     const progress=Math.max(0,Math.min(1,1-until/2300));
     const x=role==='piano'?bounds.left+(n.lane+.5)*(bounds.right-bounds.left)/8:role==='drums'?pads[n.lane].x:role==='violin'?(holderSide==='left'?.45+(n.lane+.5)*.06125:1-(.45+(n.lane+.5)*.06125)):.75;

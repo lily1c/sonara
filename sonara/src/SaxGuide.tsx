@@ -12,7 +12,7 @@ export default function SaxGuide({pose,active}:{pose?:Pose;active:number}){
   <ellipse cx="430" cy="400" rx="230" ry="150" fill={pose?.upper?'#2864f012':'#ffffff10'} stroke={pose?.upper?'#2864f0':'#657ca8'} strokeWidth="3" strokeDasharray="10 9"/>
   <ellipse cx="590" cy="680" rx="230" ry="150" fill={pose?.lower?'#2864f012':'#ffffff10'} stroke={pose?.lower?'#2864f0':'#657ca8'} strokeWidth="3" strokeDasharray="10 9"/>
   <text x="240" y="295" fill="#2864f0">UPPER HAND</text><text x="780" y="550" fill="#2864f0">LOWER HAND</text>
-  {[0,1].map(row=><g key={row}>{fingerNames.map((name,i)=><g key={name}><circle cx={240+i*120} cy={row===0?155:875} r="22" fill={pose?.fingers[row]?.[i]?'#2864f0':'#ffffffce'} stroke="#2864f0" strokeWidth="2.5"/><text x={240+i*120} y={(row===0?155:875)+7} style={{stroke:'none'}} fill={pose?.fingers[row]?.[i]?'#fff':'#244b9b'}>{name[0]}</text><text x={240+i*120} y={row===0?205:928} fill="#364d78" style={{fontSize:19}}>{i===0?(row===0?'Register':'Low key'):name}</text></g>)}</g>)}
+  {[0,1].map(row=><g key={row}>{fingerNames.map((name,i)=><g key={name}><circle cx={240+i*120} cy={row===0?155:875} r="22" fill={pose?.fingers[row]?.[i]?'#2864f0':'#ffffffce'} stroke="#2864f0" strokeWidth="2.5"/><text x={240+i*120} y={(row===0?155:875)+7} style={{stroke:'none'}} fill={pose?.fingers[row]?.[i]?'#fff':'#244b9b'}>{name[0]}</text><text x={240+i*120} y={row===0?205:928} fill="#364d78" style={{fontSize:19}}>{i===0?(row===0?'Upper keys':'Low key'):name}</text></g>)}</g>)}
   {active>=0&&<path d="M 815 630 Q 890 605 898 548 M 833 675 Q 915 672 942 610" fill="none" stroke="#2864f0" strokeWidth="4" strokeLinecap="round"/>}
  </svg>;
 }

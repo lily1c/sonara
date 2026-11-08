@@ -293,3 +293,7 @@ All dock instrument drawings are original MIT SONARA artwork. Rhythm Plus was co
 ## Solana integration
 
 Wallet Standard packages, Metaplex Umi/Core SDKs and their dependencies retain their declared licenses in the inventory above and the supplied license files in public/licenses. The musician illustration is original SONARA MIT artwork. No wallet brand artwork is bundled. See docs/SOLANA.md for dependency audit limitations.
+
+## Public-domain melody songbook
+
+Twinkle, Twinkle Little Star (traditional French melody) and Ode to Joy (L. V. Beethoven) use new simplified SONARA game arrangements, distributed as MIT project material. No lyrics, commercial recordings or third-party modern arrangement files are bundled. Composition provenance and public-domain catalog references are retained in docs/SONGS.md and in the song picker. First Jam remains an original SONARA composition.
