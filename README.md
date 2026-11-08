@@ -1,5 +1,9 @@
 # SONARA
 
+**Live game: https://sonara-gby7.onrender.com/**
+
+Hosted on Render Free; an idle service can take about a minute to wake.
+
 A doodle-style webcam music studio with piano, drums, violin, saxophone, multiplayer room codes, and optional Solana Devnet collectibles and performance receipts.
 
 The application lives in [`sonara/`](sonara/).
