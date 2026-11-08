@@ -3,6 +3,7 @@
 “SONARA turns AI hand tracking into a band studio. Solana gives each wallet persistent musician progress and verifies earned claims without allowing duplicate XP.”
 
 1. Start a solo song. Show the instrument-specific hand diagram, camera landmarks, and keyboard/touch alternatives. AI here is pretrained MediaPipe hand detection; practice feedback is rule-based.
+   Finish the solo take with four timed hits to show saved browser-local XP, titles and badges. Explain that these are separate from on-chain band XP.
 2. Prepare two devices on https://sonara-gby7.onrender.com. Choose different instruments, join by room code, explicitly share camera/sound, ready and start together.
 3. Each player lands four timed notes and stays connected until completion. The live First Band checklist explains progress. Pick an original song or the reviewed public-domain arrangements.
 4. Results show normalized rankings and personalized, self-contained doodle SVG keepsakes. Explain that the poster is not an NFT or blockchain proof.
