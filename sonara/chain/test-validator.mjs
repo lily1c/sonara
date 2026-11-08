@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash,createPrivateKey,sign} from 'node:crypto';
 import {Connection,PublicKey,Keypair,Transaction,TransactionInstruction,SystemProgram,Ed25519Program,SYSVAR_INSTRUCTIONS_PUBKEY,sendAndConfirmTransaction,LAMPORTS_PER_SOL} from '@solana/web3.js';
-const rpc=new Connection('http://127.0.0.1:8899','confirmed'),root=new URL('../',import.meta.url),ids=JSON.parse(readFileSync(new URL('chain/addresses.json',root))),program=new PublicKey(ids.program);
+const rpc=new Connection('http://127.0.0.1:8908','confirmed'),root=new URL('../',import.meta.url),ids=JSON.parse(readFileSync(new URL('chain/addresses.json',root))),program=new PublicKey(ids.program);
 const key=name=>Keypair.fromSecretKey(Uint8Array.from(JSON.parse(readFileSync(new URL(`.sonara-data/onchain/${name}-keypair.json`,root))))),admin=key('deployer'),issuer=key('test-issuer'),player=key('test-player');
 const config=PublicKey.findProgramAddressSync([Buffer.from('config')],program)[0];
 const profile=wallet=>PublicKey.findProgramAddressSync([Buffer.from('profile'),wallet.toBuffer()],program)[0];
@@ -28,3 +28,5 @@ const signature=await send(instructions(m),player),state=await rpc.getAccountInf
 await assert.rejects(send(instructions(m),player),/0x1b59/);const unchanged=await rpc.getAccountInfo(profile(player.publicKey));assert.equal(unchanged.data.readBigUInt64LE(40),15n);assert.equal(unchanged.data.readBigUInt64LE(48),1n);
 await send(instructions(voucher('second-session')),player);const second=await rpc.getAccountInfo(profile(player.publicKey));assert.equal(second.data.readBigUInt64LE(40),30n);assert.equal(second.data.readBigUInt64LE(48),2n);
 console.log('Local validator passed: signed claims, persistent profile XP, replay rejection, wrong wallet/issuer/profile, missing precompile, unsafe offsets, expiry, hit bounds, and prefunded PDAs.');console.log('Local-only transaction:',signature);
+
+const solo=voucher('solo');solo[149]=1;solo[151]=1;await send(instructions(solo),player);await assert.rejects(send(instructions(solo),player),/0x1b59/);const soloState=await rpc.getAccountInfo(profile(player.publicKey));assert.equal(soloState.data.readBigUInt64LE(40),45n);assert.equal(soloState.data.readBigUInt64LE(48),3n);const fakeBand=voucher('fake-band');fakeBand[149]=1;await assert.rejects(send(instructions(fakeBand),player));console.log('Solo claim, shared profile XP, solo replay and malformed mode tests passed.');

@@ -54,3 +54,12 @@ it('lets only the host choose a song, resets readiness and rejects stale song ev
  a.send({type:'ready',ready:true});b.send({type:'ready',ready:true});await a.next('state',m=>m.room.chartId==='ode-to-joy-v1'&&m.room.players.every((p:any)=>p.ready));a.send({type:'start'});const round=(await a.next('state',m=>m.room.phase==='playing')).room;s.advance(5000);
  a.send({type:'hit',chartId:'first-jam-v2',matchId:round.matchId,role:'piano',lane:2,at:s.now(),eventId:'stale',mode:'keyboard'});a.send({type:'hit',chartId:'ode-to-joy-v1',matchId:round.matchId,role:'piano',lane:2,at:s.now(),eventId:'selected',mode:'keyboard'});expect((await a.next('judgement')).judgement).toBe('Perfect');s.advance(34200);const results=(await a.next('state',m=>m.room.phase==='results')).room;expect(results.chartId).toBe('ode-to-joy-v1');expect(results.players[0].score.points).toBe(100);expect(results.players[0].score.miss).toBe(29);
 },10000);
+
+it('scores private solo takes and issues a wallet-bound solo voucher',async()=>{
+ const s=await setup(),a=await s.client(),other=await s.client();a.send({type:'create',solo:true,role:'piano'});const welcome=await a.next('welcome');await a.next('state');other.send({type:'join',code:welcome.code});expect((await other.next('error')).message).toContain('private');
+ a.send({type:'ready',ready:true});await a.next('state',m=>m.room.players[0].ready);a.send({type:'start'});const r=(await a.next('state',m=>m.room.phase==='playing')).room;
+ const wallet=generateKeyPairSync('ed25519'),address=base58.deserialize(createPublicKey(wallet.privateKey).export({format:'der',type:'spki'}).subarray(-32))[0];a.send({type:'achievement-challenge',wallet:address});await a.next('error');
+ const lanes=[0,2,4,7];s.advance(5000);for(let i=0;i<4;i++){if(i)s.advance(1500);a.send({type:'hit',role:'piano',chartId,matchId:r.matchId,lane:lanes[i],at:s.now(),eventId:String(i),mode:'keyboard'});await a.next('judgement');}
+ s.advance(duration(80)+1200);const result=(await a.next('state',m=>m.room.phase==='results')).room;expect(result.solo).toBe(true);expect(result.achievementEligible).toBe(true);
+ a.send({type:'achievement-challenge',wallet:address});const challenge=await a.next('achievement-challenge');a.send({type:'achievement-proof',signature:sign(null,Buffer.from(challenge.message),wallet.privateKey).toString('base64')});const receipt=await a.next('achievement-receipt');expect(receipt.receipt.payload.badge).toBe('first-solo');expect(receipt.receipt.payload.band).toBe(1);expect(Buffer.from(receipt.voucher.message,'base64')[151]).toBe(1);
+});

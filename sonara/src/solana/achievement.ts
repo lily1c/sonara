@@ -1,4 +1,4 @@
-export type AchievementPayload={v:1;app:'sonara';badge:'first-band';song?:string;match:string;wallet:string;role:string;points:number;performance?:number;hits:number;band:number;ended:number};
+export type AchievementPayload={v:1;app:'sonara';badge:'first-band'|'first-solo';song?:string;match:string;wallet:string;role:string;points:number;performance?:number;hits:number;band:number;ended:number};
 export type AchievementReceipt={payload:AchievementPayload;issuer:string;signature:string};
 export function receiptMemo(receipt:AchievementReceipt){return JSON.stringify(receipt);}
 export type BandCandidate={name?:string;connected:boolean;role:string;score:{perfect:number;good:number}};

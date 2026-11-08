@@ -26,7 +26,7 @@ Copy-ready project facts and suggested narrative. Personal survey answers below 
 
 SONARA makes a laptop into a playful air studio. Players use webcam hand gestures, keyboard keys or touch to play piano, drums, violin and saxophone. They can practice songs alone or invite friends into a band through a room code. Completed takes include timing feedback and a personalized doodle concert poster.
 
-Solo practice rewards completed songs with browser-local XP, badges and musician titles. In multiplayer, eligible completed takes produce signed results that players can claim on Solana Devnet. Our native Rust program verifies the authorized issuer and wallet signer, prevents duplicate wallet/session claims, and adds 10–20 XP to a wallet-owned profile. Titles and doodle looks reflect verified profile progress. An optional Metaplex Core collectible is separate from earned achievements.
+Solo practice rewards completed songs with browser-local XP, badges and musician titles. In solo or multiplayer, eligible completed takes produce server-scored signed results that players can claim on Solana Devnet. Solo claims earn First Solo, while band claims earn First Band. Our native Rust program verifies the authorized issuer and wallet signer, prevents duplicate wallet/session claims, and adds 10–20 XP to a wallet-owned profile. Titles and doodle looks reflect verified profile progress. An optional Metaplex Core collectible is separate from earned achievements.
 
 MediaPipe runs hand tracking locally, so the instrument needs no paid AI API and does not send camera frames to a hosted model. Room camera sharing is an explicit opt-in. Solana provides persistent, inspectable musician progression while the game server remains responsible for judging music performance.
 

@@ -18,7 +18,7 @@ A claim transaction includes the native Ed25519 verification instruction immedia
 
 The server still validates the live game: complete an uninterrupted band take, 2–4 players, at least two instruments, at least four timed hits each. It freezes the result, authenticates wallet control using a one-use expiring challenge, then signs the binary program voucher. The program trusts that issuer for gameplay; it does not run hand tracking or prove human play.
 
-Every accepted claim awards `10 + floor(performance / 10)` XP, at most 20. Performance is points / maximum chart points, normalized per instrument. Newcomer/Blue ink starts at profile creation; first claim unlocks Bandmate/Mint halo; 60 XP unlocks Groove Keeper/Violet rays; 120 XP unlocks Session Star/Golden constellation. Titles/looks derive from verified profile state and customize the in-app profile. They do not modify the independent musician NFT metadata.
+Every accepted claim awards `10 + floor(performance / 10)` XP, at most 20. Performance is points / maximum chart points, normalized per instrument. Newcomer/Blue ink starts at profile creation; first claim unlocks Musician/Mint halo; 60 XP unlocks Groove Keeper/Violet rays; 120 XP unlocks Session Star/Golden constellation. Titles/looks derive from verified profile state and customize the in-app profile. They do not modify the independent musician NFT metadata.
 
 Vouchers expire seven days after the take. The current room UI offers claims while that room/result is retained. Downloaded proof includes the program voucher for independent tooling; importing/redeeming files through the UI is not implemented. Old Memo proofs do not automatically grant program XP.
 
@@ -26,7 +26,7 @@ Vouchers expire seven days after the take. The current room UI offers claims whi
 
 Instructions: `0 || issuer[32]` initializes config; `1` creates/loads profile; `2 || voucher[168]` claims; `3 || issuer[32]` rotates config (admin only).
 
-Voucher byte offsets: 0 domain `SONARA_BAND_V1` padded to 16 bytes; 16 program public key; 48 wallet; 80 session hash; 112 song hash; 144 u16 points; 146 u16 performance; 148 u8 hits; 149 u8 band size; 150 u8 role; 151 reserved zero; 152 i64 ended seconds; 160 i64 expiry seconds. Integers are little-endian. The message is domain-separated and bound to the program identity; clients/deployment scripts enforce the Devnet genesis hash.
+Voucher byte offsets: 0 domain `SONARA_BAND_V1` padded to 16 bytes; 16 program public key; 48 wallet; 80 session hash; 112 song hash; 144 u16 points; 146 u16 performance; 148 u8 hits; 149 u8 band size; 150 u8 role; 151 mode (0 band, 1 solo); 152 i64 ended seconds; 160 i64 expiry seconds. Integers are little-endian. The message is domain-separated and bound to the program identity; clients/deployment scripts enforce the Devnet genesis hash.
 
 Profile: 64 bytes, discriminator `SONPROF1`, wallet at 8, u64 XP at 40, u64 sessions at 48, u16 best performance at 56, First Band flag at 58. Claim: 120 bytes, discriminator `SONCLM01`, wallet at 8, session at 40, song at 72, points at 104, performance at 106, role at 108, band size at 109, ended at 110, XP award at 118. Config: 40 bytes, `SONCONF1` followed by issuer.
 
@@ -48,3 +48,7 @@ Full validator tests: start a disposable local validator with `--bpf-program PRO
 ## Operational limits
 
 Devnet only; no real funds. Accounts require test-SOL rent and transaction fees. The program remains upgradeable by the local deployment administrator; keep ignored `.sonara-data/onchain/` keys private and backed up. The game issuer secret remains only in Render environment configuration. This is a tested hackathon program, not a formally audited mainnet contract. In-memory game rooms still reset on server restarts; confirmed profiles and claims persist on Devnet, subject to Devnet resets.
+
+## First Solo
+
+Solo mode uses a private one-player server room, with the same timestamp validation, chart scoring, wallet binding and signed voucher flow. Full completion plus four timed hits unlocks First Solo. Voucher mode byte 151 is 1 and participant count is 1; band mode keeps byte 151 at 0 and 2–4 participants. The contract checks these combinations. Both award 10–20 XP to the existing profile and share wallet/session replay protection. Solo claims do not set the First Band flag. Local browser practice badges remain separate.

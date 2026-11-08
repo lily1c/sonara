@@ -1,4 +1,20 @@
-# SONARA demo
+# SONARA two-minute solo demo
+
+0:00–0:15, slide 1: Introduce a webcam music game anyone can play with hands, keys or touch.
+
+0:15–0:25, slide 2: Explain the complete solo loop: choose a song, finish a take, earn rewards and claim verified XP.
+
+0:25–1:05, live game: Choose First Jam at 80 BPM (24 seconds plus countdown). Land at least four Perfect or Good hits and stay connected until results. Show score, local badges and the personalized poster. The take uses private server scoring.
+
+1:05–1:35, results: Choose Claim with Phantom, sign the wallet-binding message and approve the Devnet transaction. Have free test SOL ready. Use a previously confirmed claim as a clearly labeled fallback if the network is slow.
+
+1:35–1:50, slide 3 and Explorer: Show the unique claim account and wallet-owned musician profile. Explain that the server judges musical timing and the program verifies the issuer, wallet and duplicate-claim rules. Solo claims earn First Solo, while First Band still requires a real band.
+
+1:50–2:00, profile: Refresh verified XP and the unlocked doodle look. Close on approachable music practice and persistent musician progression.
+
+Prepare an extension-enabled browser with Phantom and test SOL before recording. The in-app browser may not expose your wallet extension. Never show recovery phrases or private keys. No paid AI API is required. This is Devnet, not cash rewards. Human gesture/audio and Phantom approvals require your own device check.
+
+# Band demo alternative
 
 “SONARA turns AI hand tracking into a band studio. Solana gives each wallet persistent musician progress and verifies earned claims without allowing duplicate XP.”
 

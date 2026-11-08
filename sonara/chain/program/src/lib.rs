@@ -33,7 +33,7 @@ fn profile<'a>(wallet:&AccountInfo<'a>,account:&AccountInfo<'a>,system:&AccountI
 pub fn validate_voucher(message:&[u8],program:&Pubkey,wallet:&Pubkey,now:i64)->ProgramResult{
  if message.len()!=VOUCHER_LEN||&message[..16]!=DOMAIN||&message[16..48]!=program.as_ref()||&message[48..80]!=wallet.as_ref(){return Err(error(BAD_VOUCHER))}
  let performance=u16_at(message,146);let points=u16_at(message,144);let ended=i64_at(message,152);let expires=i64_at(message,160);
- if performance>100||points>6400||message[148]<4||message[148]>64||!(2..=4).contains(&message[149])||message[150]>3||message[151]!=0||ended<=0||ended>now.saturating_add(60)||expires<=ended||expires>ended.saturating_add(604800){return Err(error(BAD_VOUCHER))}
+ if performance>100||points>6400||message[148]<4||message[148]>64||!((message[151]==0&&(2..=4).contains(&message[149]))||(message[151]==1&&message[149]==1))||message[150]>3||message[151]>1||ended<=0||ended>now.saturating_add(60)||expires<=ended||expires>ended.saturating_add(604800){return Err(error(BAD_VOUCHER))}
  if now>expires{return Err(error(EXPIRED))}Ok(())
 }
 pub fn validate_ed25519(data:&[u8],issuer:&[u8],message:&[u8])->ProgramResult{
@@ -60,7 +60,7 @@ pub fn process_instruction(program:&Pubkey,accounts:&[AccountInfo],data:&[u8])->
   let session=&message[80..112];let bump=pda(claim,&[b"claim",wallet.key.as_ref(),session],program)?;
   if *claim.owner==*program||!claim.data_is_empty(){return Err(error(REPLAY))}
   profile(wallet,player,system,program)?;create(wallet,claim,system,program,&[b"claim",wallet.key.as_ref(),session,&[bump]],CLAIM_LEN)?;
-  let percent=u16_at(message,146);let xp=10+percent/10;let mut p=player.try_borrow_mut_data()?;let total=u64_at(&p,40).checked_add(xp as u64).ok_or(ProgramError::ArithmeticOverflow)?;let sessions=u64_at(&p,48).checked_add(1).ok_or(ProgramError::ArithmeticOverflow)?;let best=u16_at(&p,56).max(percent);p[40..48].copy_from_slice(&total.to_le_bytes());p[48..56].copy_from_slice(&sessions.to_le_bytes());p[56..58].copy_from_slice(&best.to_le_bytes());p[58]=1;drop(p);
+  let percent=u16_at(message,146);let xp=10+percent/10;let mut p=player.try_borrow_mut_data()?;let total=u64_at(&p,40).checked_add(xp as u64).ok_or(ProgramError::ArithmeticOverflow)?;let sessions=u64_at(&p,48).checked_add(1).ok_or(ProgramError::ArithmeticOverflow)?;let best=u16_at(&p,56).max(percent);p[40..48].copy_from_slice(&total.to_le_bytes());p[48..56].copy_from_slice(&sessions.to_le_bytes());p[56..58].copy_from_slice(&best.to_le_bytes());if message[151]==0{p[58]=1;}drop(p);
   let mut c=claim.try_borrow_mut_data()?;c[..8].copy_from_slice(b"SONCLM01");c[8..40].copy_from_slice(wallet.key.as_ref());c[40..72].copy_from_slice(session);c[72..104].copy_from_slice(&message[112..144]);c[104..108].copy_from_slice(&message[144..148]);c[108]=message[150];c[109]=message[149];c[110..118].copy_from_slice(&message[152..160]);c[118..120].copy_from_slice(&xp.to_le_bytes());Ok(())
  },_=>Err(ProgramError::InvalidInstructionData)
  }

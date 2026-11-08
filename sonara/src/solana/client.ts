@@ -71,13 +71,13 @@ export async function signAchievementChallenge(connection:Connected,message:stri
  const {SolanaSignMessage}=await import('@solana/wallet-standard-features');
  const feature=connection.wallet.features[SolanaSignMessage] as import('@solana/wallet-standard-features').SolanaSignMessageFeature[typeof SolanaSignMessage]|undefined;
  if(!feature)throw new Error('This wallet must support message signing to bind your performance.');
- if(!message.startsWith('SONARA band achievement\n')||!message.includes(`Wallet: ${connection.account.address}\n`)||!message.includes(`Origin: ${location.origin}\n`))throw new Error('Unexpected wallet challenge.');
+ if(!/^SONARA (?:band )?achievement\n/.test(message)||!message.includes(`Wallet: ${connection.account.address}\n`)||!message.includes(`Origin: ${location.origin}\n`))throw new Error('Unexpected wallet challenge.');
  const bytes=new TextEncoder().encode(message),[result]=await feature.signMessage({account:connection.account,message:bytes});
  if(!result||result.signedMessage.length!==bytes.length||result.signedMessage.some((b,i)=>b!==bytes[i]))throw new Error('Wallet changed the authentication message.');
  return btoa(String.fromCharCode(...result.signature));
 }
 export async function verifyAchievement(receipt:import('./achievement').AchievementReceipt,issuer:string,wallet:string){
- if(receipt.issuer!==issuer||receipt.payload.wallet!==wallet||receipt.payload.app!=='sonara'||receipt.payload.badge!=='first-band'||receipt.payload.v!==1)throw new Error('Achievement identity mismatch.');
+ if(receipt.issuer!==issuer||receipt.payload.wallet!==wallet||receipt.payload.app!=='sonara'||!['first-band','first-solo'].includes(receipt.payload.badge)||receipt.payload.v!==1)throw new Error('Achievement identity mismatch.');
  const key=await crypto.subtle.importKey('raw',base58.serialize(issuer),{name:'Ed25519'},false,['verify']);
  const signature=Uint8Array.from(atob(receipt.signature),c=>c.charCodeAt(0));
  if(!await crypto.subtle.verify('Ed25519',key,signature,new TextEncoder().encode(JSON.stringify(receipt.payload))))throw new Error('Invalid achievement issuer signature.');

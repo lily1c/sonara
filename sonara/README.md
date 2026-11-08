@@ -45,7 +45,7 @@ The deployed native Rust achievement program runs on **Solana Devnet**:
 
 Use an extension-enabled Solana wallet such as Phantom and free test SOL. The game uses no mainnet funds. Claims expose the wallet, song, instrument and score publicly. Complete claims before leaving the room or starting another take. Vouchers expire after seven days; UI proof-file import is not implemented.
 
-The server remains trusted for musical scoring. The program verifies authorization and uniqueness, not human play or camera authenticity. The deployed contract currently supports band claims only. See [program accounts and verification](docs/PROGRAM.md), [wallet setup](docs/SOLANA.md) and [demo steps](docs/DEMO.md).
+The server remains trusted for musical scoring. The program verifies authorization and uniqueness, not human play or camera authenticity. Solo songs now use a private server-scored session. Complete a song with four timed hits to unlock First Solo and claim 10–20 verified XP with your wallet. First Solo and First Band share the musician profile, while First Band remains exclusive to qualifying multiplayer takes. Solo songs require the room server connection. See [program accounts and verification](docs/PROGRAM.md), [wallet setup](docs/SOLANA.md) and [demo steps](docs/DEMO.md).
 
 ## AI, cost and privacy
 

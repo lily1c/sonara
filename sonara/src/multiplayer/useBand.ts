@@ -10,7 +10,7 @@ export function useBand(){
  const [inviteOrigin,setInviteOrigin]=useState(location.origin);
  const [room,setRoom]=useState<RoomView|null>(null),[id,setId]=useState(''),[connection,setConnection]=useState('offline'),[error,setError]=useState(''),[feedback,setFeedback]=useState(''),[clock,setClock]=useState({offset:0,rtt:0,samples:0});
  const eventSequence=useRef(0),preferredRole=useRef<Role>('piano');
- const socket=useRef<WebSocket|null>(null),roomRef=useRef(room),idRef=useRef(id),clockRef=useRef(clock),intent=useRef<{type:'create'|'join';name:string;code?:string;role?:Role}|null>(null),closed=useRef(false),retries=useRef(0),retryTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+ const socket=useRef<WebSocket|null>(null),roomRef=useRef(room),idRef=useRef(id),clockRef=useRef(clock),intent=useRef<{type:'create'|'join';name:string;code?:string;role?:Role;solo?:boolean}|null>(null),closed=useRef(false),retries=useRef(0),retryTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
  roomRef.current=room;idRef.current=id;clockRef.current=clock;
  const send=useCallback((message:unknown)=>{if(socket.current?.readyState===WebSocket.OPEN)socket.current.send(JSON.stringify(message));},[]);
  const connect=useCallback(()=>{
@@ -48,7 +48,7 @@ export function useBand(){
   ws.onclose=()=>{for(const waiting of achievementWaiters.current.values()){clearTimeout(waiting.timer);waiting.reject(new Error('Room connection closed. Reconnect before claiming.'));}achievementWaiters.current.clear();clearInterval(heartbeat);setConnection('offline');if(!closed.current&&intent.current&&retries.current++<8){retryTimer.current=setTimeout(connect,2000);}else if(!closed.current)setError('Connection lost. Use Reconnect or leave the room.');};
  },[]);
  useEffect(()=>()=>{closed.current=true;clearTimeout(retryTimer.current);socket.current?.close();},[]);
- function enter(type:'create'|'join',name:string,code?:string){intent.current={type,name,code:code?.trim().toUpperCase(),role:preferredRole.current};setFeedback('');if(socket.current?.readyState===WebSocket.OPEN){socket.current.send(JSON.stringify({...intent.current}));}else connect();}
+ function enter(type:'create'|'join',name:string,code?:string,solo=false){intent.current={type,name,solo,code:code?.trim().toUpperCase(),role:preferredRole.current};setFeedback('');if(socket.current?.readyState===WebSocket.OPEN){socket.current.send(JSON.stringify({...intent.current}));}else connect();}
  const leave=()=>{closed.current=true;intent.current=null;clearTimeout(retryTimer.current);send({type:'leave'});socket.current?.close();socket.current=null;setRoom(null);roomRef.current=null;setId('');setError('');setFeedback('');setPerformers({});setPartnerNotes({});setCameraSentAt(0);soundRef.current=false;setBandSound(false);};
  const submitHit=useCallback((lane:number,mode:string,role:string)=>{const current=roomRef.current,me=current?.players.find(p=>p.id===idRef.current);if(!current||!me||role!==me.role)return;send({type:'perform',lane});if(current.phase!=='playing')return;send({type:'hit',lane,mode,role,chartId:current.chartId,matchId:current.matchId,eventId:`${Date.now()}-${++eventSequence.current}`,at:Date.now()+clockRef.current.offset});},[send]);
  const shareFrame=useCallback((image:string,tracking:number)=>{if(!roomRef.current||Date.now()-lastFrame.current<250)return;lastFrame.current=Date.now();send({type:'camera-frame',image,tracking});},[send]);

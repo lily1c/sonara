@@ -6,9 +6,11 @@
   "config": "GVgRfXeFJCgSWN5hqEXioQk3T4r3D7KeUYrG4Z8d8N2q",
   "programData": "F4VPX7SsE6xZAFjCB6v4UnDnHi8oj9tDVQrUGC3mCmqV",
   "configTransaction": "x3PkqTJerxfTWcXyditp8QUF23sy7qQoUfzqcXm3kiAs5xMFKm9YaYQ95cVa2sTPy2LmH29WpELNHyp5PjwP8sd",
-  "binarySha256": "38af469f8da4e0306739669441693c8b1835c654b2d2d5bc62879641671e15b5",
+  "binarySha256": "2af25ea7bb011cabcf99cb77d653b588d916c988afb0204637cf0d443c839240",
   "binaryBytes": 79400,
   "localValidatorTests": "passed",
   "rustUnitTests": 2,
-  "deploymentTransaction": "2qmdG1kUh789vHYZFgPuPFkdk1BAUsiMtDH5fTrkgHfcwjbgbEmqv1gcfQgMvjkTiFXZu5e8hyf9nihx73XH9jGu"
+  "deploymentTransaction": "2qmdG1kUh789vHYZFgPuPFkdk1BAUsiMtDH5fTrkgHfcwjbgbEmqv1gcfQgMvjkTiFXZu5e8hyf9nihx73XH9jGu",
+  "soloUpgradeTransaction": "3yqZZbdZN6CV1zYoKABoiVsP4KdEV4FibeEqKZsXBaE5U5Ud1suECRX4quZWNEyMFrFZ7XBY4Dq8XEL1LF1ghreP",
+  "supportsSolo": true
 }
