@@ -22,7 +22,7 @@ export function judge(score:Score,role:Role,lane:number,elapsed:number,bpm:numbe
 }
 export function expire(score:Score,role:Role,elapsed:number,bpm:number,songId=chartId){let changed=false;for(const n of chart(role,songId)){if(!score.judged[n.id]&&elapsed>n.beat*60000/bpm+220){score.judged[n.id]='Miss';score.miss++;score.combo=0;changed=true;}}return changed;}
 export type PlayerView={id:string;name:string;role:Role;ready:boolean;connected:boolean;score:Score};
-export type RoomView={code:string;host:string;players:PlayerView[];phase:'lobby'|'playing'|'results'|'interrupted';startAt:number;bpm:number;matchId:string;chartId:string;reason:string;achievementEligible?:boolean};
+export type RoomView={code:string;host:string;players:PlayerView[];phase:'lobby'|'playing'|'results'|'interrupted';startAt:number;bpm:number;matchId:string;chartId:string;reason:string;completedPlayers?:PlayerView[];achievementChecks?:import('../solana/achievement').BandRequirement[];achievementEligible?:boolean};
 
 export function laneCount(role:Role){return role==='drums'?4:8;}
 export function roleName(role:Role){return role[0].toUpperCase()+role.slice(1);}

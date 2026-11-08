@@ -4,7 +4,7 @@ import type {Duplex} from 'node:stream';
 import type {EventEmitter} from 'node:events';
 import {randomBytes,randomUUID} from 'node:crypto';
 import {createIssuer,verifyWallet,challengeMessage} from './achievements';
-import {qualified} from '../src/solana/achievement';
+import {qualified,bandRequirements} from '../src/solana/achievement';
 import type {AchievementPayload} from '../src/solana/achievement';
 import {networkInterfaces} from 'node:os';
 import {songById,validSong} from '../src/multiplayer/songs';
@@ -23,7 +23,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
  };
  server.on('upgrade',upgrade);
  function send(ws:WebSocket|null,value:unknown){if(ws?.readyState===WebSocket.OPEN){if(ws.bufferedAmount>100000){ws.terminate();return;}ws.send(JSON.stringify(value));}}
- function snapshot(room:Room):RoomView{return {code:room.code,host:room.host,phase:room.phase,startAt:room.startAt,bpm:room.bpm,matchId:room.matchId,chartId:room.chartId,reason:room.reason,achievementEligible:room.achievementEligible,players:room.players.map(({id,name,role,ready,connected,score})=>({id,name,role,ready,connected,score}))};}
+ function snapshot(room:Room):RoomView{return {code:room.code,host:room.host,phase:room.phase,startAt:room.startAt,bpm:room.bpm,matchId:room.matchId,chartId:room.chartId,reason:room.reason,achievementEligible:room.achievementEligible,achievementChecks:room.achievementChecks,completedPlayers:room.completedPlayers,players:room.players.map(({id,name,role,ready,connected,score})=>({id,name,role,ready,connected,score}))};}
  function publish(room:Room){const state=snapshot(room);for(const p of room.players)send(p.ws,{type:'state',room:state});}
  function interrupt(room:Room,reason:string){if(room.phase==='playing'){room.phase='interrupted';room.reason=reason;room.players.forEach(p=>p.ready=false);}}
  wss.on('connection',(ws,request)=>{
@@ -120,7 +120,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
     if(m.type==='song'){
      if(room.host!==player.id)return fail('Only the host can choose the song.');
      if(room.phase==='playing'||!validSong(m.songId))return;
-     room.chartId=m.songId;room.bpm=songById(m.songId).tempo;room.phase='lobby';room.achievementEligible=false;room.completion=undefined;room.players.forEach(p=>p.ready=false);publish(room);return;
+     room.chartId=m.songId;room.bpm=songById(m.songId).tempo;room.phase='lobby';room.achievementEligible=false;room.achievementChecks=undefined;room.completedPlayers=undefined;room.completion=undefined;room.players.forEach(p=>p.ready=false);publish(room);return;
     }
     if(m.type==='tempo'){
      if(room.host!==player.id||room.phase==='playing')return;
@@ -131,7 +131,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
      if(room.host!==player.id)return fail('Only the room creator can start.');
      if(room.phase==='playing')return;
      if(room.players.length<2||room.players.some(p=>!p.connected||!p.ready))return fail('At least two players must join, and everyone must be connected and ready.');
-     room.completion=undefined;room.claimBindings={};room.achievementEligible=false;room.phase='playing';room.startAt=now+5000;room.matchId=randomUUID();room.reason='';for(const p of room.players){p.score=emptyScore();p.seen.clear();p.rate=0;}publish(room);return;
+     room.completion=undefined;room.claimBindings={};room.achievementEligible=false;room.achievementChecks=undefined;room.completedPlayers=undefined;room.phase='playing';room.startAt=now+5000;room.matchId=randomUUID();room.reason='';for(const p of room.players){p.score=emptyScore();p.seen.clear();p.rate=0;}publish(room);return;
     }
     if(m.type==='hit'){
      if(room.phase!=='playing'||m.matchId!==room.matchId||m.chartId!==room.chartId||m.role!==player.role)return;
@@ -154,7 +154,7 @@ export function attachRooms(server:EventEmitter,clock:()=>number=Date.now,issuer
    if(!room.players.length||now-room.touched>3600000){for(const p of room.players)p.ws?.close(1000,'Room expired');rooms.delete(room.code);continue;}
    if(room.phase==='playing'){
     let changed=false;for(const p of room.players)changed=expire(p.score,p.role,now-room.startAt-800,room.bpm,room.chartId)||changed;
-    if(now>room.startAt+duration(room.bpm,room.chartId)+1100){for(const p of room.players){expire(p.score,p.role,Infinity,room.bpm,room.chartId);p.ready=false;}room.achievementEligible=qualified(room.players);room.completion={band:room.players.length,ended:Math.round(room.startAt+duration(room.bpm,room.chartId)),players:Object.fromEntries(room.players.map(p=>[p.id,{role:p.role,points:p.score.points,hits:p.score.perfect+p.score.good}]))};room.phase='results';changed=true;}
+    if(now>room.startAt+duration(room.bpm,room.chartId)+1100){for(const p of room.players){expire(p.score,p.role,Infinity,room.bpm,room.chartId);p.ready=false;}room.achievementEligible=qualified(room.players);room.achievementChecks=bandRequirements(room.players,true);room.completedPlayers=room.players.map(({id,name,role,score})=>({id,name,role,ready:false,connected:true,score:structuredClone(score)}));room.completion={band:room.players.length,ended:Math.round(room.startAt+duration(room.bpm,room.chartId)),players:Object.fromEntries(room.players.map(p=>[p.id,{role:p.role,points:p.score.points,hits:p.score.perfect+p.score.good}]))};room.phase='results';changed=true;}
     if(changed)publish(room);
    }
   }

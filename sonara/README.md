@@ -206,3 +206,9 @@ See [demo script and release status](docs/DEMO.md) before presenting. Run `npm t
 ## Songbook and competition
 
 Choose **Twinkle, Twinkle Little Star**, **Ode to Joy**, or the original **First Jam** in the studio. Listen previews the opening notes. Solo saves your best performance per song/instrument/tempo on this browser. In band mode the host chooses the song; everyone readies again, then plays the same chart together. Results rank players using normalized performance percentages, including shared ranks for ties. See [song provenance, controls and scoring](docs/SONGS.md). All melodic instruments now use C4–C5 in C major; the sax thumb chooses the upper four notes. No commercial song recordings or lyrics are included.
+
+## Doodle keepsakes and achievement rules
+
+The **Achievements** button explains the complete First Band path. Band rooms show live progress for player count, different instrument types, uninterrupted connection, four timed hits per player, and finishing the song. Results preserve the server's finished checklist and show exactly which conditions were missed. Wallet message signing, free Devnet SOL, transaction approval, public receipt data, solo exclusions and claim-session lifetime are explained in-app.
+
+Results also preview a fully drawn SVG keepsake. Artwork changes with the song, instrument lineup, solo/band mode, performance tier and First Band eligibility. Standalone exports embed Patrick Hand and its OFL license; drawings, text and paper texture need no external resources. Eligible posters say **eligible to claim**, never imply a confirmed on-chain badge. Completed lineups are frozen so changing lobby instruments or peers leaving does not rewrite the take's poster.

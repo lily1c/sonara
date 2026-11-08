@@ -10,3 +10,5 @@ dist/
 
 # Local UI verification screenshots
 preview*.png
+
+preview*.svg

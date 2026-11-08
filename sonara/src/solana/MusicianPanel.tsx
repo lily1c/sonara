@@ -1,3 +1,4 @@
+import BandAchievementGuide from './BandAchievementGuide';
 import {useEffect,useRef,useState} from 'react';
 import {getWallets} from '@wallet-standard/app';
 import type {Wallet} from '@wallet-standard/base';
@@ -31,6 +32,7 @@ export default function MusicianPanel({instrument,onClose}:{instrument:string;on
   </>}
   {busy&&<p role="status" className="chain-status">{busy}</p>}{message&&<p role="status" className="chain-message">{message}</p>}
   {signature&&<a className="chain-tx" href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`} target="_blank" rel="noreferrer">Confirmed transaction ↗</a>}
+  <details className="wallet-quest"><summary>How do band achievements work?</summary><BandAchievementGuide/></details>
   <p className="chain-note">You approve each transaction in your wallet. No mainnet, private-key entry or automatic purchases. Metadata uses this temporary game URL; it will need permanent hosting before a lasting release. Game XP and server-authorized achievements are a separate next step. Guest play stays available.</p>
  </aside>;
 }

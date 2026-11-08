@@ -297,3 +297,5 @@ Wallet Standard packages, Metaplex Umi/Core SDKs and their dependencies retain t
 ## Public-domain melody songbook
 
 Twinkle, Twinkle Little Star (traditional French melody) and Ode to Joy (L. V. Beethoven) use new simplified SONARA game arrangements, distributed as MIT project material. No lyrics, commercial recordings or third-party modern arrangement files are bundled. Composition provenance and public-domain catalog references are retained in docs/SONGS.md and in the song picker. First Jam remains an original SONARA composition.
+
+Standalone doodle SVG exports embed the local Patrick Hand font as a data URI and retain the complete supplied OFL text in SVG metadata. Instrument musicians, borders, textures, stamps and song decorations are original SONARA vector artwork, MIT. No AI image generation or reference-image tracing is used for these exports.

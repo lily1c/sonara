@@ -8,7 +8,8 @@ import PracticeCoach from './multiplayer/PracticeCoach';
 import FeatureBoundary from './FeatureBoundary';
 import StartFlow from './StartFlow';
 import {useSoloGame} from './multiplayer/useSoloGame';
-import {downloadPoster} from './multiplayer/poster';
+import PosterCard from './multiplayer/PosterCard';
+import BandAchievementGuide from './solana/BandAchievementGuide';
 import DoodleFeedback from './DoodleFeedback';
 import InstrumentGuide from './InstrumentGuide';
 import {DrumDetector,BowDetector,SaxDetector,fingerStates,instruments,type TrackedHand} from './lib/instruments';
@@ -20,6 +21,7 @@ const MusicianPanel=lazy(()=>import('./solana/MusicianPanel'));
 const colors=['#4978f5','#59b8b1','#aa8bdd','#e8b24e'];
 export default function App(){
  const [songId,setSongId]=useState('twinkle-v1');
+ const [rulesOpen,setRulesOpen]=useState(false);
  const [profileOpen,setProfileOpen]=useState(false);
  const [screen,setScreen]=useState<'start'|'mode'|'instrument'|'play'>('start');
  const screenRef=useRef(screen);screenRef.current=screen;
@@ -129,8 +131,9 @@ useEffect(()=>{if(lessonRoom?.phase!=='playing'){bowSound(null);saxSound(null);l
  }
  function menu(){stop();solo.reset();band.leave();grooveStop.current?.();grooveStop.current=null;setGroove(false);setScreen('start');}
  return <main className={`camera-first ${band.room?'in-room':''}`} data-mode={view}>
-  <header><a className="brand" href="."><span className="brandmark">▥</span> SONARA</a><nav className="mode-nav" aria-label="Play mode" style={{visibility:screen==='play'?'visible':'hidden'}}><button aria-pressed={view==='solo'} disabled={!!band.room} onClick={()=>{solo.reset();setView('solo');}}>Solo studio</button><button aria-pressed={view==='band'} onClick={()=>{solo.reset();setView('band');}}>Play together</button></nav><button className="musician-launch" onClick={()=>setProfileOpen(v=>!v)}>♫ Musician · Devnet</button><span className="local">{screen==='play'&&<button className="menu-button" onClick={menu}>← Main menu</button>}<i/> {band.room?'BAND SESSION':'YOUR AIR STUDIO'}</span></header>
+  <header><a className="brand" href="."><span className="brandmark">▥</span> SONARA</a><nav className="mode-nav" aria-label="Play mode" style={{visibility:screen==='play'?'visible':'hidden'}}><button aria-pressed={view==='solo'} disabled={!!band.room} onClick={()=>{solo.reset();setView('solo');}}>Solo studio</button><button aria-pressed={view==='band'} onClick={()=>{solo.reset();setView('band');}}>Play together</button></nav><button className="achievement-launch" onClick={()=>{setRulesOpen(v=>!v);setProfileOpen(false);}}>✧ Achievements</button><button className="musician-launch" onClick={()=>setProfileOpen(v=>!v)}>♫ Musician · Devnet</button><span className="local">{screen==='play'&&<button className="menu-button" onClick={menu}>← Main menu</button>}<i/> {band.room?'BAND SESSION':'YOUR AIR STUDIO'}</span></header>
   
+  {rulesOpen&&<aside className="quest-drawer" aria-label="Achievements and rules"><button className="quest-close" aria-label="Close achievement guide" onClick={()=>setRulesOpen(false)}>×</button><h2>Your musician journey.</h2><BandAchievementGuide room={band.room}/></aside>}
   {profileOpen&&<FeatureBoundary onClose={()=>setProfileOpen(false)}><Suspense fallback={<aside className="musician-drawer">Loading Devnet profile…</aside>}><MusicianPanel instrument={instrument} onClose={()=>setProfileOpen(false)}/></Suspense></FeatureBoundary>}
   {screen!=='play'&&<StartFlow step={screen} onStep={setScreen} mode={view} onMode={setView} onChoose={i=>{solo.reset();band.chooseInstrument(i);selectInstrument(i);setScreen('play');}}/>}
   <div className="app-layout" style={{display:screen==='play'?undefined:'none'}}>
@@ -148,7 +151,7 @@ useEffect(()=>{if(lessonRoom?.phase!=='playing'){bowSound(null);saxSound(null);l
     {instrument==='violin'&&<div className="pose-status" role="status">{running?pose:'Pose guide: holding hand in ring, bow hand in colored track'}</div>}
     {instrument==='saxophone'&&<div className="sax-status" role="status">{!running?'Show both hands, one a little higher. Curl and straighten fingers to change notes.':!saxPose.ready?`Show both hands · ${saxPose.fingers.length}/2 detected · palms toward camera`:`Playing ${saxPose.lane===null?'…':saxNotes[saxPose.lane+(saxPose.register?4:0)]} · curl finger keys to change pitch`}</div>}
     <CameraLesson band={lessonBand} bounds={bounds} holderSide={holderSide}/>
-    {solo.room?.phase==='results'&&<div className="solo-results" role="status"><img src="/doodles/band.svg" alt=""/><span className="eyebrow">{songById(solo.room.chartId).title.toUpperCase()} · TAKE COMPLETE</span><h2>{solo.room.players[0].score.points>0?'You made music.':'Every band starts somewhere.'}</h2><strong>{solo.room.players[0].score.points} points</strong><p>{solo.room.players[0].score.perfect} Perfect · {solo.room.players[0].score.good} Good · {solo.room.players[0].score.miss} Miss</p><span className="personal-best">Personal best: {solo.best}% performance · this browser · {solo.room.bpm} BPM</span><PracticeCoach score={solo.room.players[0].score} role={solo.room.players[0].role} bpm={solo.room.bpm} songId={solo.room.chartId} onPractice={bpm=>void solo.start(bpm,songId).catch(()=>setError("Sound could not start. Try again."))}/><button onClick={()=>void solo.start(solo.room?.bpm,songId)}>Play again →</button><button onClick={solo.reset}>Free play</button><button onClick={()=>downloadPoster(solo.room!)}>Save poster</button></div>}
+    {solo.room?.phase==='results'&&<div className="solo-results" role="status"><img src="/doodles/band.svg" alt=""/><span className="eyebrow">{songById(solo.room.chartId).title.toUpperCase()} · TAKE COMPLETE</span><h2>{solo.room.players[0].score.points>0?'You made music.':'Every band starts somewhere.'}</h2><strong>{solo.room.players[0].score.points} points</strong><p>{solo.room.players[0].score.perfect} Perfect · {solo.room.players[0].score.good} Good · {solo.room.players[0].score.miss} Miss</p><span className="personal-best">Personal best: {solo.best}% performance · this browser · {solo.room.bpm} BPM</span><PracticeCoach score={solo.room.players[0].score} role={solo.room.players[0].role} bpm={solo.room.bpm} songId={solo.room.chartId} onPractice={bpm=>void solo.start(bpm,songId).catch(()=>setError("Sound could not start. Try again."))}/><button onClick={()=>void solo.start(solo.room?.bpm,songId)}>Play again →</button><button onClick={solo.reset}>Free play</button><PosterCard room={solo.room}/><details className="solo-band-next"><summary>How do I earn a Solana band achievement?</summary><BandAchievementGuide/></details></div>}
     <DoodleFeedback pulse={pulse} instrument={instrument} bounds={bounds} bowPosition={bowPosition}/>
     <div className="camera-footer"><span>{running?`${metrics.hands} hand${metrics.hands===1?'':'s'} detected`:'CAMERA OFF'}</span><span>{running?`${metrics.fps} FPS · ${metrics.ms} ms inference`:'ON-DEVICE TRACKING'}</span></div>
    </div>
